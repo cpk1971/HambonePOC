@@ -10,7 +10,7 @@ import XCTest
 
 final class BowlingScoresheetFrameTests: XCTestCase {
     typealias Frame = BowlingScoresheet.Frame
-    typealias ScoresheetError = BowlingScoresheet.ScoresheetError
+    typealias ScoresheetError = BowlingScoresheet.Error
     typealias Leave = BowlingScoresheet.Leave
 
     func testThatAFrameReportsTheRightCompletionStatus() throws {

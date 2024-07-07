@@ -112,7 +112,7 @@ final class BowlingScoresheetTests: XCTestCase {
         XCTAssertTrue(scoresheet.isComplete, "once the game is complete, isComplete should be true")
         
         XCTAssertThrowsError(try scoresheet.recordThrow(leaving: []), "once the game is complete we can't throw anymore") { error in
-            XCTAssertEqual(error as! BowlingScoresheet.ScoresheetError, .gameCompleted)
+            XCTAssertEqual(error as! BowlingScoresheet.Error, .gameCompleted)
         }
     }
     

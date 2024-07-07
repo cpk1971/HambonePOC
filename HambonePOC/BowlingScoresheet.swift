@@ -45,19 +45,8 @@ struct BowlingScoresheet: CustomStringConvertible {
     /// Remembering what pins were left as part of the scoresheet is essential to this feature.
     typealias Leave = Set<Pins>
 
-    /// How much of a frame a bowler has thrown.  Whether the frame is complete or not is
-    /// contextual based upon the frame's number and whether or not the bowler has bowled a strike.
-    // FIXME: let's move this to Frame
-    enum Status {
-        case notThrown
-        case firstBallThrown(leave: Leave)
-        case secondBallThrown(first: Leave, second: Leave)
-        case thirdBallThrown(first: Leave, second: Leave, third: Leave)
-    }
-    
     /// Errors thrown by the API
-    // FIXME: let's just call this Error if we can
-    enum ScoresheetError : Swift.Error {
+    enum Error : Swift.Error {
         case gameCompleted
         case invalidFrame
         case unsequencedThrow
@@ -66,6 +55,15 @@ struct BowlingScoresheet: CustomStringConvertible {
     /// A model of a frame of bowling.
     /// This contains some state which has to be processed externally, such as the running score.
     struct Frame : CustomStringConvertible {
+        /// How much of a frame a bowler has thrown.  Whether the frame is complete or not is
+        /// contextual based upon the frame's number and whether or not the bowler has bowled a strike.
+        enum Status {
+            case notThrown
+            case firstBallThrown(leave: Leave)
+            case secondBallThrown(first: Leave, second: Leave)
+            case thirdBallThrown(first: Leave, second: Leave, third: Leave)
+        }
+        
         var number: Int
         var status: Status = .notThrown
         var runningScore: Int = 0
@@ -210,7 +208,7 @@ struct BowlingScoresheet: CustomStringConvertible {
         
         mutating func recordThrow(leaving leave: Leave) throws {
             if isComplete {
-                throw ScoresheetError.unsequencedThrow
+                throw Error.unsequencedThrow
             }
             
             switch status {
@@ -222,10 +220,10 @@ struct BowlingScoresheet: CustomStringConvertible {
                 if number == 10 {
                     status = .thirdBallThrown(first: first, second: second, third: leave)
                 } else {
-                    throw ScoresheetError.unsequencedThrow
+                    throw Error.unsequencedThrow
                 }
             case .thirdBallThrown:
-                throw ScoresheetError.unsequencedThrow
+                throw Error.unsequencedThrow
             }
         }
         
@@ -322,7 +320,7 @@ struct BowlingScoresheet: CustomStringConvertible {
     
     mutating func recordThrow(leaving leave: Leave) throws {
         if isComplete {
-            throw ScoresheetError.gameCompleted
+            throw Error.gameCompleted
         }
         
         let index = currentNumber! - 1
@@ -340,13 +338,13 @@ struct BowlingScoresheet: CustomStringConvertible {
     mutating func resetFrame(number: Int?) throws -> (first: Leave?, second: Leave?, third: Leave?)  {
         // FIXME: - range check input
         if number == nil && currentNumber == nil {
-            throw ScoresheetError.gameCompleted
+            throw Error.gameCompleted
         }
 
         let number = number ?? currentNumber!
 
         guard (1...10).contains(number) else {
-            throw ScoresheetError.invalidFrame
+            throw Error.invalidFrame
         }
         
         currentNumber = number
@@ -355,7 +353,7 @@ struct BowlingScoresheet: CustomStringConvertible {
     
     mutating func resetGame(toFrame number: Int = 1) throws {
         guard (1...10).contains(number) else {
-            throw ScoresheetError.invalidFrame
+            throw Error.invalidFrame
         }
         
         for i in (number-1)...9 {
