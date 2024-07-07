@@ -136,6 +136,26 @@ final class BowlingScoresheetFrameTests: XCTestCase {
         
         frame = Frame(number: 1, status: .secondBallThrown(first: [.one], second: [.one]))
         XCTAssertFalse(frame.isSpare, "an open frame is not a spare")
+        
+        frame = Frame(number: 10, status: .thirdBallThrown(first: [.one], second: [], third: []))
+        XCTAssertTrue(frame.isSpare, "a spare is properly recognized in the tenth frame")
+    }
+    
+    func testThatLineWorks() {
+        XCTAssertEqual("", Frame(number: 1).line, "unthrown frame should have an empty line")
+        
+        XCTAssertEqual("X", Frame(number: 1, status: .firstBallThrown(leave: [])).line, "a strike should have the line 'X'")
+        XCTAssertEqual("8", Frame(number: 1, status: .firstBallThrown(leave: [.six, .ten])).line, "a single 8 count should have the line '8'")
+        
+        XCTAssertEqual("9 /", Frame(number: 1, status: .secondBallThrown(first: [.ten], second: [])).line, "counts of 9 and 1 should have the line '9 /'")
+        XCTAssertEqual("8 1", Frame(number: 1, status: .secondBallThrown(first: [.six, .ten], second: [.ten])).line, "chopping the 6 off the 6-10 should have the line '8 1'")
+        
+        XCTAssertEqual("X X X", Frame(number: 10, status: .thirdBallThrown(first: [], second: [], third: [])).line, "a 10th frame turkey should have the line 'X X X'")
+        XCTAssertEqual("X 9 /", Frame(number: 10, status: .thirdBallThrown(first: [], second: [.ten], third: [])).line, "10th frame strike/spare should have the line 'X 9 /'")
+        XCTAssertEqual("9 / X", Frame(number: 10, status: .thirdBallThrown(first: [.ten], second: [], third: [])).line, "10th frame spare/strike should have the line '9 / X'")
+        XCTAssertEqual("9 / 9", Frame(number: 10, status: .thirdBallThrown(first: [.ten], second: [], third: [.ten])).line, "10th frame 9/9 should have the line '9 / 9'")
+        XCTAssertEqual("X X 8", Frame(number: 10, status: .thirdBallThrown(first: [], second: [], third: [.six, .ten])).line, "a 28-count 10th frame should have the line 'X X 8")
+        XCTAssertEqual("X 9 0", Frame(number: 10, status: .thirdBallThrown(first: [], second: [.ten], third: [.ten])).line, "an incomplete fill of 19 after a strike should have the line 'X 9 0")
     }
     
     func testThatRecordThrowWorks() throws {

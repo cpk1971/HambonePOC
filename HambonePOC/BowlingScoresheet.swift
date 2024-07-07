@@ -37,26 +37,26 @@ enum ScoresheetError : Error {
     case unsequencedThrow
 }
 
-struct Frame {
+struct Frame : CustomStringConvertible {
     var number: Int
     var status: Status = .notThrown
     var runningScore: Int = 0
     
     var isComplete: Bool {
-        switch self.status {
+        switch status {
         case .notThrown: 
             false
         case .firstBallThrown(let leave):
-            leave == [] && self.number < 10
+            leave == [] && number < 10
         case .secondBallThrown(_, let second): 
-            second != [] || self.number < 10
-        case .thirdBallThrown: 
+            second != [] || number < 10
+        case .thirdBallThrown:
             true
         }
     }
     
     var firstBallCount: Int {
-        switch self.status {
+        switch status {
         case .notThrown:
             0
         case let .firstBallThrown(first):
@@ -70,13 +70,13 @@ struct Frame {
     
     // this is a special case because of the tenth frame
     var secondBallCount: Int {
-        switch self.status {
+        switch status {
         case .notThrown:
             0
         case .firstBallThrown:
             0
         case let .secondBallThrown(first, second):
-            if number == 10 && self.isStrike {
+            if number == 10 && isStrike {
                 10 - second.count
             } else {
                 first.count - second.count
@@ -91,7 +91,7 @@ struct Frame {
     }
     
     var totalCount: Int {
-        switch self.status {
+        switch status {
         case .notThrown:
             0
         case let .firstBallThrown(leave):
@@ -112,7 +112,7 @@ struct Frame {
     }
     
     var isStrike: Bool {
-        switch self.status {
+        switch status {
         case .notThrown: 
             false
         case let .firstBallThrown(leave): 
@@ -125,7 +125,7 @@ struct Frame {
     }
     
     var isSpare: Bool {
-        switch self.status {
+        switch status {
         case .notThrown:
             false
         case .firstBallThrown:
@@ -133,23 +133,58 @@ struct Frame {
         case let .secondBallThrown(_, second):
             second.count == 0
         case let .thirdBallThrown(_, second, _):
-            second.count == 9
+            second.count == 0
+        }
+    }
+    
+    var description: String {
+        "[#\(number): \(line) = \(runningScore)]"
+    }
+    
+    var line: String {
+        return switch status {
+        case .notThrown:
+            ""
+        case .firstBallThrown:
+            isStrike ? "X" : "\(firstBallCount)"
+        case .secondBallThrown:
+            isSpare ? "\(firstBallCount) /" : "\(firstBallCount) \(secondBallCount)"
+        case let .thirdBallThrown(_, second, third):
+            if isStrike {
+                if second.count == 0 && third.count == 0 {
+                    "X X X"
+                } else if second.count == 0 {
+                    "X X \(10 - third.count)"
+                } else if third.count == 0 {
+                    "X \(10 - second.count) /"
+                } else {
+                    "X \(10 - second.count) \(second.count - third.count)"
+                }
+            } else if isSpare {
+                if third.count == 0 {
+                    "\(firstBallCount) / X"
+                } else {
+                    "\(firstBallCount) / \(10 - third.count)"
+                }
+            } else {
+                "\(firstBallCount) \(secondBallCount)"
+            }
         }
     }
     
     mutating func recordThrow(leaving leave: Leave) throws {
-        if self.isComplete {
+        if isComplete {
             throw ScoresheetError.unsequencedThrow
         }
         
-        switch self.status {
+        switch status {
         case .notThrown:
-            self.status = .firstBallThrown(leave: leave)
+            status = .firstBallThrown(leave: leave)
         case let .firstBallThrown(first):
-            self.status = .secondBallThrown(first: first, second: leave)
+            status = .secondBallThrown(first: first, second: leave)
         case let .secondBallThrown(first, second):
-            if self.number == 10 {
-                self.status = .thirdBallThrown(first: first, second: second, third: leave)
+            if number == 10 {
+                status = .thirdBallThrown(first: first, second: second, third: leave)
             } else {
                 throw ScoresheetError.unsequencedThrow
             }
