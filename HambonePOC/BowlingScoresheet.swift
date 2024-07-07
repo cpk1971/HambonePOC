@@ -68,184 +68,9 @@ struct BowlingScoresheet: CustomStringConvertible {
         var status: Status = .notThrown
         var runningScore: Int = 0
         
-        var isComplete: Bool {
-            switch status {
-            case .notThrown:
-                false
-            case let .firstBallThrown(leave):
-                leave == [] && number < 10
-            case let .secondBallThrown(first, second):
-                if number < 10 {
-                    true
-                } else {
-                    first != [] && second != []
-                }
-            case .thirdBallThrown:
-                true
-            }
-        }
-        
-        var firstBallCount: Int {
-            switch status {
-            case .notThrown:
-                0
-            case let .firstBallThrown(first):
-                10 - first.count
-            case let .secondBallThrown(first, _):
-                10 - first.count
-            case let .thirdBallThrown(first, _, _):
-                10 - first.count
-            }
-        }
-        
-        // this is a special case because of the tenth frame
-        var secondBallCount: Int {
-            switch status {
-            case .notThrown:
-                0
-            case .firstBallThrown:
-                0
-            case let .secondBallThrown(first, second):
-                if number == 10 && isStrike {
-                    10 - second.count
-                } else {
-                    first.count - second.count
-                }
-            case let .thirdBallThrown(first, second, _):
-                if number == 10 && isStrike {
-                    10 - second.count
-                } else {
-                    first.count - second.count
-                }
-            }
-        }
-        
-        var totalCount: Int {
-            switch status {
-            case .notThrown:
-                0
-            case let .firstBallThrown(leave):
-                10 - leave.count
-            case let .secondBallThrown(_, second):
-                10 - second.count
-            case let .thirdBallThrown(first, second, third):
-                if first.count == 0 {
-                    if second.count == 0 {
-                        30 - third.count
-                    } else {
-                        20 - third.count
-                    }
-                } else {
-                    20 - third.count
-                }
-            }
-        }
-        
-        var isStrike: Bool {
-            switch status {
-            case .notThrown:
-                false
-            case let .firstBallThrown(leave):
-                leave.count == 0
-            case let .secondBallThrown(first, _):
-                first.count == 0
-            case let .thirdBallThrown(first, _, _):
-                first.count == 0
-            }
-        }
-        
-        var isSpare: Bool {
-            switch status {
-            case .notThrown:
-                false
-            case .firstBallThrown:
-                false
-            case let .secondBallThrown(_, second):
-                second.count == 0
-            case let .thirdBallThrown(_, second, _):
-                second.count == 0
-            }
-        }
-        
-        var description: String {
-            "[#\(number): \(line) = \(runningScore)]"
-        }
-        
-        var line: String {
-            return switch status {
-            case .notThrown:
-                ""
-            case .firstBallThrown:
-                isStrike ? "X" : "\(firstBallCount)"
-            case .secondBallThrown:
-                if !isStrike || (number < 10) {
-                    isSpare ? "\(firstBallCount) /" : "\(firstBallCount) \(secondBallCount)"
-                } else {
-                    "X \(secondBallCount)"
-                }
-            case let .thirdBallThrown(_, second, third):
-                if isStrike {
-                    if second.count == 0 && third.count == 0 {
-                        "X X X"
-                    } else if second.count == 0 {
-                        "X X \(10 - third.count)"
-                    } else if third.count == 0 {
-                        "X \(10 - second.count) /"
-                    } else {
-                        "X \(10 - second.count) \(second.count - third.count)"
-                    }
-                } else if isSpare {
-                    if third.count == 0 {
-                        "\(firstBallCount) / X"
-                    } else {
-                        "\(firstBallCount) / \(10 - third.count)"
-                    }
-                } else {
-                    "\(firstBallCount) \(secondBallCount)"
-                }
-            }
-        }
-        
-        mutating func recordThrow(leaving leave: Leave) throws {
-            if isComplete {
-                throw Error.unsequencedThrow
-            }
-            
-            switch status {
-            case .notThrown:
-                status = .firstBallThrown(leave: leave)
-            case let .firstBallThrown(first):
-                status = .secondBallThrown(first: first, second: leave)
-            case let .secondBallThrown(first, second):
-                if number == 10 {
-                    status = .thirdBallThrown(first: first, second: second, third: leave)
-                } else {
-                    throw Error.unsequencedThrow
-                }
-            case .thirdBallThrown:
-                throw Error.unsequencedThrow
-            }
-        }
-        
-        mutating func reset() -> (first: Leave?, second: Leave?, third: Leave?) {
-            let oldStatus = status
-            status = .notThrown
-            return switch oldStatus {
-            case .notThrown:
-                (nil, nil, nil)
-            case let .firstBallThrown(first):
-                (first, nil, nil)
-            case let .secondBallThrown(first, second):
-                (first, second, nil)
-            case let .thirdBallThrown(first, second, third):
-                (first, second, third)
-            }
-        }
+        // implementation is in extension towards end of file
     }
-
-
-
-    
+   
     private(set) var frames: [Frame]
     private(set) var totalScore = 0
     private(set) var currentNumber: Int? = 1
@@ -406,4 +231,184 @@ extension BowlingScoresheet.Leave {
         }
     }
     
+}
+
+extension BowlingScoresheet.Frame {
+    typealias Leave = BowlingScoresheet.Leave
+    typealias Error = BowlingScoresheet.Error
+    
+    var isComplete: Bool {
+        switch status {
+        case .notThrown:
+            false
+        case let .firstBallThrown(leave):
+            leave == [] && number < 10
+        case let .secondBallThrown(first, second):
+            if number < 10 {
+                true
+            } else {
+                first != [] && second != []
+            }
+        case .thirdBallThrown:
+            true
+        }
+    }
+    
+    var firstBallCount: Int {
+        switch status {
+        case .notThrown:
+            0
+        case let .firstBallThrown(first):
+            10 - first.count
+        case let .secondBallThrown(first, _):
+            10 - first.count
+        case let .thirdBallThrown(first, _, _):
+            10 - first.count
+        }
+    }
+    
+    // this is a special case because of the tenth frame
+    var secondBallCount: Int {
+        switch status {
+        case .notThrown:
+            0
+        case .firstBallThrown:
+            0
+        case let .secondBallThrown(first, second):
+            if number == 10 && isStrike {
+                10 - second.count
+            } else {
+                first.count - second.count
+            }
+        case let .thirdBallThrown(first, second, _):
+            if number == 10 && isStrike {
+                10 - second.count
+            } else {
+                first.count - second.count
+            }
+        }
+    }
+    
+    var totalCount: Int {
+        switch status {
+        case .notThrown:
+            0
+        case let .firstBallThrown(leave):
+            10 - leave.count
+        case let .secondBallThrown(_, second):
+            10 - second.count
+        case let .thirdBallThrown(first, second, third):
+            if first.count == 0 {
+                if second.count == 0 {
+                    30 - third.count
+                } else {
+                    20 - third.count
+                }
+            } else {
+                20 - third.count
+            }
+        }
+    }
+    
+    var isStrike: Bool {
+        switch status {
+        case .notThrown:
+            false
+        case let .firstBallThrown(leave):
+            leave.count == 0
+        case let .secondBallThrown(first, _):
+            first.count == 0
+        case let .thirdBallThrown(first, _, _):
+            first.count == 0
+        }
+    }
+    
+    var isSpare: Bool {
+        switch status {
+        case .notThrown:
+            false
+        case .firstBallThrown:
+            false
+        case let .secondBallThrown(_, second):
+            second.count == 0
+        case let .thirdBallThrown(_, second, _):
+            second.count == 0
+        }
+    }
+    
+    var description: String {
+        "[#\(number): \(line) = \(runningScore)]"
+    }
+    
+    var line: String {
+        return switch status {
+        case .notThrown:
+            ""
+        case .firstBallThrown:
+            isStrike ? "X" : "\(firstBallCount)"
+        case .secondBallThrown:
+            if !isStrike || (number < 10) {
+                isSpare ? "\(firstBallCount) /" : "\(firstBallCount) \(secondBallCount)"
+            } else {
+                "X \(secondBallCount)"
+            }
+        case let .thirdBallThrown(_, second, third):
+            if isStrike {
+                if second.count == 0 && third.count == 0 {
+                    "X X X"
+                } else if second.count == 0 {
+                    "X X \(10 - third.count)"
+                } else if third.count == 0 {
+                    "X \(10 - second.count) /"
+                } else {
+                    "X \(10 - second.count) \(second.count - third.count)"
+                }
+            } else if isSpare {
+                if third.count == 0 {
+                    "\(firstBallCount) / X"
+                } else {
+                    "\(firstBallCount) / \(10 - third.count)"
+                }
+            } else {
+                "\(firstBallCount) \(secondBallCount)"
+            }
+        }
+    }
+    
+    mutating func recordThrow(leaving leave: Leave) throws {
+        if isComplete {
+            throw Error.unsequencedThrow
+        }
+        
+        switch status {
+        case .notThrown:
+            status = .firstBallThrown(leave: leave)
+        case let .firstBallThrown(first):
+            status = .secondBallThrown(first: first, second: leave)
+        case let .secondBallThrown(first, second):
+            if number == 10 {
+                status = .thirdBallThrown(first: first, second: second, third: leave)
+            } else {
+                throw Error.unsequencedThrow
+            }
+        case .thirdBallThrown:
+            throw Error.unsequencedThrow
+        }
+    }
+    
+    mutating func reset() -> (first: Leave?, second: Leave?, third: Leave?) {
+        let oldStatus = status
+        status = .notThrown
+        return switch oldStatus {
+        case .notThrown:
+            (nil, nil, nil)
+        case let .firstBallThrown(first):
+            (first, nil, nil)
+        case let .secondBallThrown(first, second):
+            (first, second, nil)
+        case let .thirdBallThrown(first, second, third):
+            (first, second, third)
+        }
+    }
+
 }
