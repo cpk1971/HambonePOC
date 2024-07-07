@@ -11,7 +11,21 @@
 
 import Foundation
 
+/// A model of a scoresheet used in American Tenpins, the form
+/// of bowling that most Americans just call "bowling".
+///
+/// Note that we'll probably have to do some tremendous refactoring to
+/// support the following:
+/// 1. Nine-pin "no tap".
+/// 2. World Tenpins, a variant (and significantly less complex) form of scoring.
+///
 struct BowlingScoresheet: CustomStringConvertible {
+    /// A model of bowling pins.
+    ///
+    /// In fact we could just represent each pin with a bit, but to make
+    /// our code easier to read, we'll refer to them as an enumeration.
+    /// Assigning values may make it easier to compactly represent a game when
+    /// we get around to storage.
     enum Pins: Int {
         case one   = 0x001,
              two   = 0x002,
@@ -25,8 +39,15 @@ struct BowlingScoresheet: CustomStringConvertible {
              ten   = 0x200
     }
 
+    /// A "leave" is what is left *after* a bowler throws a ball at a setup.
+    /// This allows us to keep track of what pins were left, because one of the
+    /// features of Hambone will be to track a bowler's performance in converting spares.
+    /// Remembering what pins were left as part of the scoresheet is essential to this feature.
     typealias Leave = Set<Pins>
 
+    /// How much of a frame a bowler has thrown.  Whether the frame is complete or not is
+    /// contextual based upon the frame's number and whether or not the bowler has bowled a strike.
+    // FIXME: let's move this to Frame
     enum Status {
         case notThrown
         case firstBallThrown(leave: Leave)
@@ -34,12 +55,16 @@ struct BowlingScoresheet: CustomStringConvertible {
         case thirdBallThrown(first: Leave, second: Leave, third: Leave)
     }
     
-    enum ScoresheetError : Error {
+    /// Errors thrown by the API
+    // FIXME: let's just call this Error if we can
+    enum ScoresheetError : Swift.Error {
         case gameCompleted
         case invalidFrame
         case unsequencedThrow
     }
 
+    /// A model of a frame of bowling.
+    /// This contains some state which has to be processed externally, such as the running score.
     struct Frame : CustomStringConvertible {
         var number: Int
         var status: Status = .notThrown
@@ -340,14 +365,20 @@ struct BowlingScoresheet: CustomStringConvertible {
 }
 
 extension BowlingScoresheet.Leave {
+    /// The leave is a split if it meets the criteria specified by USBC Playing Rule 2h, which is:
+    ///
+    /// A split is a setup of pins left standing after the first delivery, provided the head pin is down and at least one pin is down:
+    ///
+    ///    1. Between two or more standing pins; e.g., 7-9 or 3-10.
+    ///    2. Immediately ahead of two or more standing pins; e.g., 5-6.
     var isSplit: Bool {
-        // must have at least two pins
-        return if count <= 1 {
+        // ...it must have at least two standing pins
+        if count <= 1 {
             false
-        // must not contain the headpin
+        // ...the headpin must be down
         } else if contains(.one) {
             false
-        // if two pins are adjacent but the pin in front is down, it's a split, irrespective of the rest
+        // ...if two pins are adjacent but the pin in front is down, it's a split, irrespective of the rest
         } else if contains(.two) && contains(.three) && !contains(.five) ||
                   contains(.four) && contains(.five) && !contains(.two) ||
                   contains(.five) && contains(.six) && !contains(.three) ||
@@ -355,7 +386,7 @@ extension BowlingScoresheet.Leave {
                   contains(.eight) && contains(.nine) && !contains(.five) ||
                   contains(.nine) && contains(.ten) && !contains(.six) {
             true
-        // any single pin "out by itself" makes the whole thing a split
+        // and now a heuristic:  any single pin "out by itself" makes the whole thing a split
         } else if contains(.two) && !(contains(.four) || contains(.five) || contains(.eight)) ||
                   contains(.three) && !(contains(.five) || contains(.six) || contains(.nine)) ||
                   contains(.four) && !(contains(.two) || contains(.seven) || contains(.eight)) ||
@@ -366,11 +397,12 @@ extension BowlingScoresheet.Leave {
                   contains(.nine) && !(contains(.three) || contains(.five) || contains(.six)) ||
                   contains(.ten) && !(contains(.six) || contains(.nine)) {
             true
-        // complex edge cases that cover the "big 4" and the "Greek Church" and the "4 through the middle"
+        // finally, complex edge cases that cover the "big 4" and the "Greek Church" and the "4 through the middle"
         } else if (contains(.four) && contains(.six)) && !contains(.five) ||
                   (contains(.seven) && contains(.nine)) && !contains(.eight) ||
                   (contains(.eight) && contains(.ten)) && !contains(.nine) {
             true
+        // and we're out of criteria--it's therefore not a split
         } else {
             false
         }
