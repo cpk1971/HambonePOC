@@ -11,31 +11,34 @@ import XCTest
 final class BowlingScoresheetFrameTests: XCTestCase {
     func testThatAFrameReportsTheRightCompletionStatus() throws {
         var frame = Frame(number: 1)
-        XCTAssert(!frame.isComplete, "a new frame shouldn't be complete")
+        XCTAssertFalse(frame.isComplete, "a new frame shouldn't be complete")
         
         frame = Frame(number: 1, status: .firstBallThrown(leave: []))
-        XCTAssert(frame.isComplete, "a strike completes a frame")
+        XCTAssertTrue(frame.isComplete, "a strike completes a frame")
         
         frame = Frame(number: 1, status: .firstBallThrown(leave : [.one]))
-        XCTAssert(!frame.isComplete, "a left pin doesn't complete a frame")
+        XCTAssertFalse(frame.isComplete, "a left pin doesn't complete a frame")
         
         frame = Frame(number: 1, status: .secondBallThrown(first: [.one], second: []))
-        XCTAssert(frame.isComplete, "a spare completes a non-tenth frame")
+        XCTAssertTrue(frame.isComplete, "a spare completes a non-tenth frame")
         
         frame = Frame(number: 1, status: .secondBallThrown(first: [.one, .two], second: [.one]))
-        XCTAssert(frame.isComplete, "any second throw completes a frame")
+        XCTAssertTrue(frame.isComplete, "any second throw completes a frame")
         
         frame = Frame(number: 10, status: .firstBallThrown(leave: []))
-        XCTAssert(!frame.isComplete, "a strike doesn't complete the tenth frame")
+        XCTAssertFalse(frame.isComplete, "a strike doesn't complete the tenth frame")
         
         frame = Frame(number: 10, status: .secondBallThrown(first: [.one], second: []))
-        XCTAssert(!frame.isComplete, "a spare doesn't complete the tenth frame")
+        XCTAssertFalse(frame.isComplete, "a spare doesn't complete the tenth frame")
+        
+        frame = Frame(number: 10, status: .secondBallThrown(first: [], second: [.one]))
+        XCTAssertFalse(frame.isComplete, "the first fill ball doesn't complete the tenth frame after a strike")
         
         frame = Frame(number: 10, status: .thirdBallThrown(first: [], second: [], third: []))
-        XCTAssert(frame.isComplete, "three balls completes the tenth frame")
+        XCTAssertTrue(frame.isComplete, "three balls completes the tenth frame")
         
         frame = Frame(number: 10, status: .secondBallThrown(first: [.one], second: [.one]))
-        XCTAssert(frame.isComplete, "an open frame completes the tenth frame")
+        XCTAssertTrue(frame.isComplete, "an open frame completes the tenth frame")
     }
     
     func testThatFirstBallCountWorks() {
@@ -139,6 +142,10 @@ final class BowlingScoresheetFrameTests: XCTestCase {
         
         frame = Frame(number: 10, status: .thirdBallThrown(first: [.one], second: [], third: []))
         XCTAssertTrue(frame.isSpare, "a spare is properly recognized in the tenth frame")
+    }
+    
+    func testDescription() {
+        XCTAssertEqual("[#10: X X X = 300]", Frame(number: 10, status: .thirdBallThrown(first: [], second: [], third: []), runningScore: 300).description, "just testing the description")
     }
     
     func testThatLineWorks() {

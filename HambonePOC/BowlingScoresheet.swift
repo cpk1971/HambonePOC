@@ -35,6 +35,7 @@ enum Status {
 
 enum ScoresheetError : Error {
     case unsequencedThrow
+    case gameCompleted
 }
 
 struct Frame : CustomStringConvertible {
@@ -46,10 +47,14 @@ struct Frame : CustomStringConvertible {
         switch status {
         case .notThrown: 
             false
-        case .firstBallThrown(let leave):
+        case let .firstBallThrown(leave):
             leave == [] && number < 10
-        case .secondBallThrown(_, let second): 
-            second != [] || number < 10
+        case let .secondBallThrown(first, second):
+            if number < 10 {
+                true
+            } else {
+                first != [] && second != []
+            }
         case .thirdBallThrown:
             true
         }
@@ -148,7 +153,11 @@ struct Frame : CustomStringConvertible {
         case .firstBallThrown:
             isStrike ? "X" : "\(firstBallCount)"
         case .secondBallThrown:
-            isSpare ? "\(firstBallCount) /" : "\(firstBallCount) \(secondBallCount)"
+            if !isStrike || (number < 10) {
+                isSpare ? "\(firstBallCount) /" : "\(firstBallCount) \(secondBallCount)"
+            } else {
+                "X \(secondBallCount)"
+            }
         case let .thirdBallThrown(_, second, third):
             if isStrike {
                 if second.count == 0 && third.count == 0 {
@@ -192,12 +201,28 @@ struct Frame : CustomStringConvertible {
             throw ScoresheetError.unsequencedThrow
         }
     }
+    
+    mutating func reset() -> (first: Leave?, second: Leave?, third: Leave?) {
+        let oldStatus = status
+        status = .notThrown
+        return switch oldStatus {
+        case .notThrown:
+            (nil, nil, nil)
+        case let .firstBallThrown(first):
+            (first, nil, nil)
+        case let .secondBallThrown(first, second):
+            (first, second, nil)
+        case let .thirdBallThrown(first, second, third):
+            (first, second, third)
+        }
+    }
 }
 
 
-struct BowlingScoresheet {
+struct BowlingScoresheet: CustomStringConvertible {
     private(set) var frames: [Frame]
     private(set) var totalScore = 0
+    private(set) var currentNumber: Int? = 1
     
     init() {
         frames = (1...10).map { frameNumber in
@@ -205,11 +230,31 @@ struct BowlingScoresheet {
         }
     }
     
+    var currentFrame: Frame? {
+        if let currentNumber {
+            frames[currentNumber - 1]
+        } else {
+            nil
+        }
+    }
+    
+    var isComplete: Bool {
+        // this might not be the best?
+        currentNumber == .none
+    }
+    
+    var description: String {
+        var result = "["
+        frames.forEach { result += $0.description }
+        result += "]"
+        return result
+    }
+    
     mutating func updateRunningScore() {
         var total = 0
         
         for i in frames.indices {
-            var frame = frames[i]
+            let frame = frames[i]
             
             let currentScore = if(frame.number < 9) {
                 if frame.isStrike {
@@ -217,7 +262,7 @@ struct BowlingScoresheet {
                         if frames[i+2].isStrike {
                             30
                         } else {
-                            20 + frames[i+2].totalCount
+                            20 + frames[i+2].firstBallCount
                         }
                     } else {
                         10 + frames[i+1].totalCount
@@ -241,9 +286,83 @@ struct BowlingScoresheet {
             }
             
             total += currentScore
-            frame.runningScore = total
+            frames[i].runningScore = total
+        }
+        
+        totalScore = total
+    }
+    
+    mutating func recordThrow(leaving leave: Leave) throws {
+        if isComplete {
+            throw ScoresheetError.gameCompleted
+        }
+        
+        let index = currentNumber! - 1
+        
+        try frames[index].recordThrow(leaving: leave)
+        if frames[index].isComplete {
+            if currentNumber! < 10 {
+                currentNumber! += 1
+            } else {
+                currentNumber = nil
+            }
+        }
+    }
+    
+    mutating func resetFrame(number: Int?) throws -> (first: Leave?, second: Leave?, third: Leave?)  {
+        // FIXME - range check input
+        if number == nil && currentNumber == nil {
+            throw ScoresheetError.gameCompleted
+        }
+        
+        let number = number ?? currentNumber!
+        currentNumber = number
+        return frames[number - 1].reset()
+    }
+    
+    mutating func resetGame(to number: Int) {
+        // FIXME - range check input
+        for i in (number-1)...9 {
+            (_, _, _) = frames[i].reset()
         }
     }
 }
 
-
+extension Leave {
+    var isSplit: Bool {
+        // must have at least two pins
+        return if count <= 1 {
+            false
+        // must not contain the headpin
+        } else if contains(.one) {
+            false
+        // if two pins are adjacent but the pin in front is down, it's a split, irrespective of the rest
+        } else if contains(.two) && contains(.three) && !contains(.five) ||
+                  contains(.four) && contains(.five) && !contains(.two) ||
+                  contains(.five) && contains(.six) && !contains(.three) ||
+                  contains(.seven) && contains(.eight) && !contains(.four) ||
+                  contains(.eight) && contains(.nine) && !contains(.five) ||
+                  contains(.nine) && contains(.ten) && !contains(.six) {
+            true
+        // any single pin "out by itself" makes the whole thing a split
+        } else if contains(.two) && !(contains(.four) || contains(.five) || contains(.eight)) ||
+                  contains(.three) && !(contains(.five) || contains(.six) || contains(.nine)) ||
+                  contains(.four) && !(contains(.two) || contains(.seven) || contains(.eight)) ||
+                  contains(.five) && !(contains(.two) || contains(.three) || contains(.eight) || contains(.nine)) ||
+                  contains(.six) && !(contains(.three) || contains(.nine) || contains(.ten)) ||
+                  contains(.seven) && !(contains(.four) || contains(.eight)) ||
+                  contains(.eight) && !(contains(.two) || contains(.four) || contains(.five)) ||
+                  contains(.nine) && !(contains(.three) || contains(.five) || contains(.six)) ||
+                  contains(.ten) && !(contains(.six) || contains(.nine)) {
+            true
+        // complex edge cases that cover the "big 4" and the "Greek Church" and the "4 through the middle"
+        } else if (contains(.four) && contains(.six)) && !contains(.five) ||
+                  (contains(.seven) && contains(.nine)) && !contains(.eight) ||
+                  (contains(.eight) && contains(.ten)) && !contains(.nine) {
+            true
+        } else {
+            false
+        }
+    }
+    
+}
