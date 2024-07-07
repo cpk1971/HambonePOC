@@ -9,6 +9,10 @@ import XCTest
 @testable import HambonePOC
 
 final class BowlingScoresheetFrameTests: XCTestCase {
+    typealias Frame = BowlingScoresheet.Frame
+    typealias ScoresheetError = BowlingScoresheet.ScoresheetError
+    typealias Leave = BowlingScoresheet.Leave
+
     func testThatAFrameReportsTheRightCompletionStatus() throws {
         var frame = Frame(number: 1)
         XCTAssertFalse(frame.isComplete, "a new frame shouldn't be complete")
