@@ -15,7 +15,7 @@ final class BowlingScoresheetTests: XCTestCase {
         var scoresheet = BowlingScoresheet()
         
         for _ in 1...12 {
-            try scoresheet.recordThrow(leaving: [])
+            try scoresheet.recordDelivery(leaving: [])
         }
         
         scoresheet.updateRunningScore()
@@ -34,15 +34,15 @@ final class BowlingScoresheetTests: XCTestCase {
         
         // OK bowl a five pin, spare, then strike, five times
         for _ in 1...5 {
-            try scoresheet.recordThrow(leaving: [.five])
-            try scoresheet.recordThrow(leaving: [])
-            try scoresheet.recordThrow(leaving: [])
+            try scoresheet.recordDelivery(leaving: [.five])
+            try scoresheet.recordDelivery(leaving: [])
+            try scoresheet.recordDelivery(leaving: [])
         }
         
         
-        // now throw the spare again
-        try scoresheet.recordThrow(leaving: [.five])
-        try scoresheet.recordThrow(leaving: [])
+        // now bowl the spare again
+        try scoresheet.recordDelivery(leaving: [.five])
+        try scoresheet.recordDelivery(leaving: [])
         
         scoresheet.updateRunningScore()
         XCTAssertEqual(200, scoresheet.totalScore, "Dutch 200 was expected")
@@ -59,7 +59,7 @@ final class BowlingScoresheetTests: XCTestCase {
     func testAMoreRealisticScore() throws {
         var scoresheet = BowlingScoresheet()
         
-        let someThrows : [Leave] = [
+        let someDeliveries : [Leave] = [
             [.one, .two, .three, .five, .six, .nine, .ten],
             [.ten], // #1 3 6 = 9
             [.ten],
@@ -77,7 +77,7 @@ final class BowlingScoresheetTests: XCTestCase {
             [.seven], // #10 8 1 = 162
         ]
         
-        try someThrows.forEach { try scoresheet.recordThrow(leaving: $0) }
+        try someDeliveries.forEach { try scoresheet.recordDelivery(leaving: $0) }
         scoresheet.updateRunningScore()
         print(scoresheet)
         
@@ -96,22 +96,22 @@ final class BowlingScoresheetTests: XCTestCase {
         
         XCTAssertEqual(1, currentFrame.number, "new scoresheet should start with current frame 1")
         
-        let success = if case .notThrown = currentFrame.status { true } else { false }
+        let success = if case .none = currentFrame.deliveries { true } else { false }
         XCTAssertTrue(success, "first frame shouldn't be thrown")
         
         for _ in 1...10 {
             XCTAssertFalse(scoresheet.isComplete, "scoresheet shouldn't be complete yet")
-            try scoresheet.recordThrow(leaving: [])
+            try scoresheet.recordDelivery(leaving: [])
         }
 
         // throw the fill balls in the tenth
-        try scoresheet.recordThrow(leaving: [])
-        try scoresheet.recordThrow(leaving: [])
+        try scoresheet.recordDelivery(leaving: [])
+        try scoresheet.recordDelivery(leaving: [])
         
         XCTAssertNil(scoresheet.currentFrame, "once the game is complete, the current frame should be nil")
         XCTAssertTrue(scoresheet.isComplete, "once the game is complete, isComplete should be true")
         
-        XCTAssertThrowsError(try scoresheet.recordThrow(leaving: []), "once the game is complete we can't throw anymore") { error in
+        XCTAssertThrowsError(try scoresheet.recordDelivery(leaving: []), "once the game is complete we can't throw anymore") { error in
             XCTAssertEqual(error as! BowlingScoresheet.Error, .gameCompleted)
         }
     }
@@ -168,20 +168,20 @@ final class BowlingScoresheetTests: XCTestCase {
         var scoresheet = BowlingScoresheet()
         
         for _ in 1...12 {
-            try scoresheet.recordThrow(leaving: [])
+            try scoresheet.recordDelivery(leaving: [])
         }
   
         try scoresheet.resetGame(toFrame: 2)
         XCTAssertTrue(scoresheet.frames[0].isComplete, "frame #1 should be complete")
         for i in 1..<10 {
             XCTAssertFalse(scoresheet.frames[i].isComplete, "frame #\(i+1) should not be complete")
-            let success = if case .notThrown = scoresheet.frames[i].status { true } else { false }
-            XCTAssertTrue(success, "frame #\(i+1) should be thrown")
+            let success = if case .none = scoresheet.frames[i].deliveries { true } else { false }
+            XCTAssertTrue(success, "frame #\(i+1) should be undelivered")
         }
         
         try scoresheet.resetGame()
         XCTAssertFalse(scoresheet.frames[0].isComplete, "frame #1 should not be complete")
-        let success = if case .notThrown = scoresheet.frames[0].status { true } else { false }
-        XCTAssertTrue(success, "frame #1 should be thrown")
+        let success = if case .none = scoresheet.frames[0].deliveries { true } else { false }
+        XCTAssertTrue(success, "frame #1 should be undelivered")
     }
 }

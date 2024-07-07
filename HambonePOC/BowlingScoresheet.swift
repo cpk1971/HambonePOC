@@ -26,6 +26,7 @@ struct BowlingScoresheet: CustomStringConvertible {
     /// our code easier to read, we'll refer to them as an enumeration.
     /// Assigning values may make it easier to compactly represent a game when
     /// we get around to storage.
+    // TODO: there isn't a way to represent a foul here; perhaps another bit?
     enum Pins: Int {
         case one   = 0x001,
              two   = 0x002,
@@ -49,23 +50,23 @@ struct BowlingScoresheet: CustomStringConvertible {
     enum Error : Swift.Error {
         case gameCompleted
         case invalidFrame
-        case unsequencedThrow
+        case unsequencedDelivery
     }
 
     /// A model of a frame of bowling.
     /// This contains some state which has to be processed externally, such as the running score.
     struct Frame : CustomStringConvertible {
-        /// How much of a frame a bowler has thrown.  Whether the frame is complete or not is
+        /// How much of a frame a bowler has delivered.  Whether the frame is complete or not is
         /// contextual based upon the frame's number and whether or not the bowler has bowled a strike.
-        enum Status {
-            case notThrown
-            case firstBallThrown(leave: Leave)
-            case secondBallThrown(first: Leave, second: Leave)
-            case thirdBallThrown(first: Leave, second: Leave, third: Leave)
+        enum Deliveries {
+            case none
+            case one(leave: Leave)
+            case two(first: Leave, second: Leave)
+            case three(first: Leave, second: Leave, third: Leave)
         }
         
         var number: Int
-        var status: Status = .notThrown
+        var deliveries: Deliveries = .none
         var runningScore: Int = 0
         
         // implementation is in extension towards end of file
@@ -77,7 +78,7 @@ struct BowlingScoresheet: CustomStringConvertible {
     
     init() {
         frames = (1...10).map { frameNumber in
-            Frame(number: frameNumber, status: .notThrown, runningScore: 0)
+            Frame(number: frameNumber, deliveries: .none, runningScore: 0)
         }
     }
     
@@ -143,14 +144,14 @@ struct BowlingScoresheet: CustomStringConvertible {
         totalScore = total
     }
     
-    mutating func recordThrow(leaving leave: Leave) throws {
+    mutating func recordDelivery(leaving leave: Leave) throws {
         if isComplete {
             throw Error.gameCompleted
         }
         
         let index = currentNumber! - 1
         
-        try frames[index].recordThrow(leaving: leave)
+        try frames[index].recordDelivery(leaving: leave)
         if frames[index].isComplete {
             if currentNumber! < 10 {
                 currentNumber! += 1
@@ -161,7 +162,6 @@ struct BowlingScoresheet: CustomStringConvertible {
     }
     
     mutating func resetFrame(number: Int?) throws -> (first: Leave?, second: Leave?, third: Leave?)  {
-        // FIXME: - range check input
         if number == nil && currentNumber == nil {
             throw Error.gameCompleted
         }
@@ -238,49 +238,49 @@ extension BowlingScoresheet.Frame {
     typealias Error = BowlingScoresheet.Error
     
     var isComplete: Bool {
-        switch status {
-        case .notThrown:
+        switch deliveries {
+        case .none:
             false
-        case let .firstBallThrown(leave):
+        case let .one(leave):
             leave == [] && number < 10
-        case let .secondBallThrown(first, second):
+        case let .two(first, second):
             if number < 10 {
                 true
             } else {
                 first != [] && second != []
             }
-        case .thirdBallThrown:
+        case .three:
             true
         }
     }
     
     var firstBallCount: Int {
-        switch status {
-        case .notThrown:
+        switch deliveries {
+        case .none:
             0
-        case let .firstBallThrown(first):
+        case let .one(first):
             10 - first.count
-        case let .secondBallThrown(first, _):
+        case let .two(first, _):
             10 - first.count
-        case let .thirdBallThrown(first, _, _):
+        case let .three(first, _, _):
             10 - first.count
         }
     }
     
     // this is a special case because of the tenth frame
     var secondBallCount: Int {
-        switch status {
-        case .notThrown:
+        switch deliveries {
+        case .none:
             0
-        case .firstBallThrown:
+        case .one:
             0
-        case let .secondBallThrown(first, second):
+        case let .two(first, second):
             if number == 10 && isStrike {
                 10 - second.count
             } else {
                 first.count - second.count
             }
-        case let .thirdBallThrown(first, second, _):
+        case let .three(first, second, _):
             if number == 10 && isStrike {
                 10 - second.count
             } else {
@@ -290,14 +290,14 @@ extension BowlingScoresheet.Frame {
     }
     
     var totalCount: Int {
-        switch status {
-        case .notThrown:
+        switch deliveries {
+        case .none:
             0
-        case let .firstBallThrown(leave):
+        case let .one(leave):
             10 - leave.count
-        case let .secondBallThrown(_, second):
+        case let .two(_, second):
             10 - second.count
-        case let .thirdBallThrown(first, second, third):
+        case let .three(first, second, third):
             if first.count == 0 {
                 if second.count == 0 {
                     30 - third.count
@@ -311,27 +311,27 @@ extension BowlingScoresheet.Frame {
     }
     
     var isStrike: Bool {
-        switch status {
-        case .notThrown:
+        switch deliveries {
+        case .none:
             false
-        case let .firstBallThrown(leave):
+        case let .one(leave):
             leave.count == 0
-        case let .secondBallThrown(first, _):
+        case let .two(first, _):
             first.count == 0
-        case let .thirdBallThrown(first, _, _):
+        case let .three(first, _, _):
             first.count == 0
         }
     }
     
     var isSpare: Bool {
-        switch status {
-        case .notThrown:
+        switch deliveries {
+        case .none:
             false
-        case .firstBallThrown:
+        case .one:
             false
-        case let .secondBallThrown(_, second):
+        case let .two(_, second):
             second.count == 0
-        case let .thirdBallThrown(_, second, _):
+        case let .three(_, second, _):
             second.count == 0
         }
     }
@@ -341,18 +341,18 @@ extension BowlingScoresheet.Frame {
     }
     
     var line: String {
-        return switch status {
-        case .notThrown:
+        return switch deliveries {
+        case .none:
             ""
-        case .firstBallThrown:
+        case .one:
             isStrike ? "X" : "\(firstBallCount)"
-        case .secondBallThrown:
+        case .two:
             if !isStrike || (number < 10) {
                 isSpare ? "\(firstBallCount) /" : "\(firstBallCount) \(secondBallCount)"
             } else {
                 "X \(secondBallCount)"
             }
-        case let .thirdBallThrown(_, second, third):
+        case let .three(_, second, third):
             if isStrike {
                 if second.count == 0 && third.count == 0 {
                     "X X X"
@@ -375,38 +375,38 @@ extension BowlingScoresheet.Frame {
         }
     }
     
-    mutating func recordThrow(leaving leave: Leave) throws {
+    mutating func recordDelivery(leaving leave: Leave) throws {
         if isComplete {
-            throw Error.unsequencedThrow
+            throw Error.unsequencedDelivery
         }
         
-        switch status {
-        case .notThrown:
-            status = .firstBallThrown(leave: leave)
-        case let .firstBallThrown(first):
-            status = .secondBallThrown(first: first, second: leave)
-        case let .secondBallThrown(first, second):
+        switch deliveries {
+        case .none:
+            deliveries = .one(leave: leave)
+        case let .one(first):
+            deliveries = .two(first: first, second: leave)
+        case let .two(first, second):
             if number == 10 {
-                status = .thirdBallThrown(first: first, second: second, third: leave)
+                deliveries = .three(first: first, second: second, third: leave)
             } else {
-                throw Error.unsequencedThrow
+                throw Error.unsequencedDelivery
             }
-        case .thirdBallThrown:
-            throw Error.unsequencedThrow
+        case .three:
+            throw Error.unsequencedDelivery
         }
     }
     
     mutating func reset() -> (first: Leave?, second: Leave?, third: Leave?) {
-        let oldStatus = status
-        status = .notThrown
+        let oldStatus = deliveries
+        deliveries = .none
         return switch oldStatus {
-        case .notThrown:
+        case .none:
             (nil, nil, nil)
-        case let .firstBallThrown(first):
+        case let .one(first):
             (first, nil, nil)
-        case let .secondBallThrown(first, second):
+        case let .two(first, second):
             (first, second, nil)
-        case let .thirdBallThrown(first, second, third):
+        case let .three(first, second, third):
             (first, second, third)
         }
     }
