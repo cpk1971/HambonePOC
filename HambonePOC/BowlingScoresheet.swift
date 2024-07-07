@@ -34,8 +34,9 @@ enum Status {
 }
 
 enum ScoresheetError : Error {
-    case unsequencedThrow
     case gameCompleted
+    case invalidFrame
+    case unsequencedThrow
 }
 
 struct Frame : CustomStringConvertible {
@@ -310,18 +311,26 @@ struct BowlingScoresheet: CustomStringConvertible {
     }
     
     mutating func resetFrame(number: Int?) throws -> (first: Leave?, second: Leave?, third: Leave?)  {
-        // FIXME - range check input
+        // FIXME: - range check input
         if number == nil && currentNumber == nil {
             throw ScoresheetError.gameCompleted
         }
-        
+
         let number = number ?? currentNumber!
+
+        guard (1...10).contains(number) else {
+            throw ScoresheetError.invalidFrame
+        }
+        
         currentNumber = number
         return frames[number - 1].reset()
     }
     
-    mutating func resetGame(to number: Int) {
-        // FIXME - range check input
+    mutating func resetGame(toFrame number: Int = 1) throws {
+        guard (1...10).contains(number) else {
+            throw ScoresheetError.invalidFrame
+        }
+        
         for i in (number-1)...9 {
             (_, _, _) = frames[i].reset()
         }

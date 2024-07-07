@@ -161,4 +161,25 @@ final class BowlingScoresheetTests: XCTestCase {
             XCTAssertFalse(leave.isSplit, "none of these are splits")
         }
     }
+    
+    func testThatResetWorks() throws {
+        var scoresheet = BowlingScoresheet()
+        
+        for _ in 1...12 {
+            try scoresheet.recordThrow(leaving: [])
+        }
+  
+        try scoresheet.resetGame(toFrame: 2)
+        XCTAssertTrue(scoresheet.frames[0].isComplete, "frame #1 should be complete")
+        for i in 1..<10 {
+            XCTAssertFalse(scoresheet.frames[i].isComplete, "frame #\(i+1) should not be complete")
+            let success = if case .notThrown = scoresheet.frames[i].status { true } else { false }
+            XCTAssertTrue(success, "frame #\(i+1) should be thrown")
+        }
+        
+        try scoresheet.resetGame()
+        XCTAssertFalse(scoresheet.frames[0].isComplete, "frame #1 should not be complete")
+        let success = if case .notThrown = scoresheet.frames[0].status { true } else { false }
+        XCTAssertTrue(success, "frame #1 should be thrown")
+    }
 }
