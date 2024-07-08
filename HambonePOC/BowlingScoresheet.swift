@@ -202,7 +202,7 @@ extension BowlingScoresheet.Leave {
         } else if contains(.one) {
             false
         // ...if two pins are adjacent but the pin in front is down, it's a split, irrespective of the rest
-        } else if contains(.two) && contains(.three) && !contains(.five) ||
+        } else if contains(.two) && contains(.three) ||
                   contains(.four) && contains(.five) && !contains(.two) ||
                   contains(.five) && contains(.six) && !contains(.three) ||
                   contains(.seven) && contains(.eight) && !contains(.four) ||
