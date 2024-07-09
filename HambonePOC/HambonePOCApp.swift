@@ -10,7 +10,7 @@ import SwiftData
 
 @main
 struct HambonePOCApp: App {
-    @StateObject var scoresheet = BowlingScoresheet()
+    // @StateObject var scoresheet = BowlingScoresheet()
     
     /*
     var sharedModelContainer: ModelContainer = {
