@@ -10,6 +10,9 @@ import SwiftData
 
 @main
 struct HambonePOCApp: App {
+    @StateObject var scoresheet = BowlingScoresheet()
+    
+    /*
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             Item.self,
@@ -22,11 +25,12 @@ struct HambonePOCApp: App {
             fatalError("Could not create ModelContainer: \(error)")
         }
     }()
+     */
 
     var body: some Scene {
         WindowGroup {
             ContentView()
         }
-        .modelContainer(sharedModelContainer)
+        // .modelContainer(sharedModelContainer)
     }
 }

@@ -19,7 +19,7 @@ import Foundation
 /// 1. Nine-pin "no tap".
 /// 2. World Tenpins, a variant (and significantly less complex) form of scoring.
 ///
-struct BowlingScoresheet: CustomStringConvertible {
+class BowlingScoresheet: CustomStringConvertible, ObservableObject {
     /// A model of bowling pins.
     ///
     /// In fact we could just represent each pin with a bit, but to make
@@ -102,7 +102,7 @@ struct BowlingScoresheet: CustomStringConvertible {
         return result
     }
     
-    mutating func updateRunningScore() {
+    func updateRunningScore() {
         var total = 0
         
         for i in frames.indices {
@@ -144,7 +144,7 @@ struct BowlingScoresheet: CustomStringConvertible {
         totalScore = total
     }
     
-    mutating func recordDelivery(leaving leave: Leave) throws {
+    func recordDelivery(leaving leave: Leave) throws {
         if isComplete {
             throw Error.gameCompleted
         }
@@ -161,7 +161,7 @@ struct BowlingScoresheet: CustomStringConvertible {
         }
     }
     
-    mutating func resetFrame(number: Int?) throws -> (first: Leave?, second: Leave?, third: Leave?)  {
+    func resetFrame(number: Int?) throws -> (first: Leave?, second: Leave?, third: Leave?)  {
         if number == nil && currentNumber == nil {
             throw Error.gameCompleted
         }
@@ -176,7 +176,7 @@ struct BowlingScoresheet: CustomStringConvertible {
         return frames[number - 1].reset()
     }
     
-    mutating func resetGame(toFrame number: Int = 1) throws {
+    func resetGame(toFrame number: Int = 1) throws {
         guard (1...10).contains(number) else {
             throw Error.invalidFrame
         }

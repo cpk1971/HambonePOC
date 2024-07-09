@@ -12,7 +12,7 @@ final class BowlingScoresheetTests: XCTestCase {
     typealias Leave = BowlingScoresheet.Leave
 
     func testA300Score() throws {
-        var scoresheet = BowlingScoresheet()
+        let scoresheet = BowlingScoresheet()
         
         for _ in 1...12 {
             try scoresheet.recordDelivery(leaving: [])
@@ -30,7 +30,7 @@ final class BowlingScoresheetTests: XCTestCase {
     }
     
     func testADutch200Score() throws {
-        var scoresheet = BowlingScoresheet()
+        let scoresheet = BowlingScoresheet()
         
         // OK bowl a five pin, spare, then strike, five times
         for _ in 1...5 {
@@ -57,7 +57,7 @@ final class BowlingScoresheetTests: XCTestCase {
     }
     
     func testAMoreRealisticScore() throws {
-        var scoresheet = BowlingScoresheet()
+        let scoresheet = BowlingScoresheet()
         
         let someDeliveries : [Leave] = [
             [.one, .two, .three, .five, .six, .nine, .ten],
@@ -91,7 +91,7 @@ final class BowlingScoresheetTests: XCTestCase {
     }
     
     func testThatStateEngineWorks() throws {
-        var scoresheet = BowlingScoresheet()
+        let scoresheet = BowlingScoresheet()
         let currentFrame = scoresheet.currentFrame!
         
         XCTAssertEqual(1, currentFrame.number, "new scoresheet should start with current frame 1")
@@ -165,7 +165,7 @@ final class BowlingScoresheetTests: XCTestCase {
     }
     
     func testThatResetWorks() throws {
-        var scoresheet = BowlingScoresheet()
+        let scoresheet = BowlingScoresheet()
         
         for _ in 1...12 {
             try scoresheet.recordDelivery(leaving: [])
