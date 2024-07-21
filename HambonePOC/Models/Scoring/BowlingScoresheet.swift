@@ -27,7 +27,7 @@ struct BowlingScoresheet: CustomStringConvertible {
     /// Assigning values may make it easier to compactly represent a game when
     /// we get around to storage.
     // TODO: there isn't a way to represent a foul here; perhaps another bit?
-    enum Pins: Int {
+    enum Pins: Int, CaseIterable {
         case one   = 0x001,
              two   = 0x002,
              three = 0x004,
@@ -38,6 +38,11 @@ struct BowlingScoresheet: CustomStringConvertible {
              eight = 0x080,
              nine  = 0x100,
              ten   = 0x200
+        
+        static func forNumber(_ number: Int) -> Pins? {
+            guard number >= 1 && number <= 10 else { return nil }
+            return allCases[number-1]
+        }
     }
 
     /// A "leave" is what is left *after* a bowler throws a ball at a setup.
@@ -411,4 +416,14 @@ extension BowlingScoresheet.Frame {
         }
     }
 
+}
+
+extension Set<BowlingScoresheet.Pins> {
+    func isPinNumberSet(_ number: Int) -> Bool {
+        if number < 1 || number > 10 {
+            return false
+        }
+        
+        return self.contains(BowlingScoresheet.Pins.allCases[number-1])
+    }
 }

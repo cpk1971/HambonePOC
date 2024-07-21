@@ -10,7 +10,8 @@ import SwiftData
 
 @main
 struct HambonePOCApp: App {
-    // @StateObject var scoresheet = BowlingScoresheet()
+    // FIXME: need outer model
+    @StateObject var game = BowlingGameViewModel()
     
     /*
     var sharedModelContainer: ModelContainer = {
@@ -29,7 +30,8 @@ struct HambonePOCApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            // ContentView()
+            BowlingGameView(viewModel: game)
         }
         // .modelContainer(sharedModelContainer)
     }

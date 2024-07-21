@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		5692EDA22C386E50000F4A68 /* HambonePOCApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5692EDA12C386E50000F4A68 /* HambonePOCApp.swift */; };
 		5692EDA42C386E50000F4A68 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5692EDA32C386E50000F4A68 /* ContentView.swift */; };
-		5692EDA62C386E50000F4A68 /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5692EDA52C386E50000F4A68 /* Item.swift */; };
 		5692EDA82C386E51000F4A68 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5692EDA72C386E51000F4A68 /* Assets.xcassets */; };
 		5692EDAB2C386E51000F4A68 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5692EDAA2C386E51000F4A68 /* Preview Assets.xcassets */; };
 		5692EDBF2C386E51000F4A68 /* HambonePOCUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5692EDBE2C386E51000F4A68 /* HambonePOCUITests.swift */; };
@@ -18,6 +17,8 @@
 		5692EDD02C390FAC000F4A68 /* BowlingScoresheetFrameTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5692EDCF2C390FAC000F4A68 /* BowlingScoresheetFrameTests.swift */; };
 		5692EDD22C3A509B000F4A68 /* BowlingScoresheetTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5692EDD12C3A509B000F4A68 /* BowlingScoresheetTests.swift */; };
 		5692EDD42C3DD20B000F4A68 /* BowlingGameViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5692EDD32C3DD20B000F4A68 /* BowlingGameViewModel.swift */; };
+		5692EDD62C3DD597000F4A68 /* BowlingGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5692EDD52C3DD597000F4A68 /* BowlingGameView.swift */; };
+		56E15F152C4D8D7A00E0CAF8 /* Rack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56E15F142C4D8D7A00E0CAF8 /* Rack.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -41,7 +42,6 @@
 		5692ED9E2C386E50000F4A68 /* HambonePOC.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HambonePOC.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5692EDA12C386E50000F4A68 /* HambonePOCApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HambonePOCApp.swift; sourceTree = "<group>"; };
 		5692EDA32C386E50000F4A68 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		5692EDA52C386E50000F4A68 /* Item.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Item.swift; sourceTree = "<group>"; };
 		5692EDA72C386E51000F4A68 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5692EDAA2C386E51000F4A68 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		5692EDB02C386E51000F4A68 /* HambonePOCTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HambonePOCTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -52,6 +52,8 @@
 		5692EDCF2C390FAC000F4A68 /* BowlingScoresheetFrameTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BowlingScoresheetFrameTests.swift; sourceTree = "<group>"; };
 		5692EDD12C3A509B000F4A68 /* BowlingScoresheetTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BowlingScoresheetTests.swift; sourceTree = "<group>"; };
 		5692EDD32C3DD20B000F4A68 /* BowlingGameViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BowlingGameViewModel.swift; sourceTree = "<group>"; };
+		5692EDD52C3DD597000F4A68 /* BowlingGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BowlingGameView.swift; sourceTree = "<group>"; };
+		56E15F142C4D8D7A00E0CAF8 /* Rack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rack.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -102,13 +104,12 @@
 		5692EDA02C386E50000F4A68 /* HambonePOC */ = {
 			isa = PBXGroup;
 			children = (
+				56E15F132C4D8D4E00E0CAF8 /* Views */,
+				56E15F112C4D8C0400E0CAF8 /* Models */,
 				5692EDA12C386E50000F4A68 /* HambonePOCApp.swift */,
 				5692EDA32C386E50000F4A68 /* ContentView.swift */,
-				5692EDA52C386E50000F4A68 /* Item.swift */,
 				5692EDA72C386E51000F4A68 /* Assets.xcassets */,
 				5692EDA92C386E51000F4A68 /* Preview Content */,
-				5692EDCD2C386EA5000F4A68 /* BowlingScoresheet.swift */,
-				5692EDD32C3DD20B000F4A68 /* BowlingGameViewModel.swift */,
 			);
 			path = HambonePOC;
 			sourceTree = "<group>";
@@ -137,6 +138,48 @@
 				5692EDC02C386E51000F4A68 /* HambonePOCUITestsLaunchTests.swift */,
 			);
 			path = HambonePOCUITests;
+			sourceTree = "<group>";
+		};
+		56E15F112C4D8C0400E0CAF8 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				56E15F172C4DC91D00E0CAF8 /* Aggregates */,
+				56E15F122C4D8C4F00E0CAF8 /* Scoring */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		56E15F122C4D8C4F00E0CAF8 /* Scoring */ = {
+			isa = PBXGroup;
+			children = (
+				5692EDCD2C386EA5000F4A68 /* BowlingScoresheet.swift */,
+				5692EDD32C3DD20B000F4A68 /* BowlingGameViewModel.swift */,
+				5692EDD52C3DD597000F4A68 /* BowlingGameView.swift */,
+			);
+			path = Scoring;
+			sourceTree = "<group>";
+		};
+		56E15F132C4D8D4E00E0CAF8 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				56E15F162C4D8D9500E0CAF8 /* Bowling Smorphs */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		56E15F162C4D8D9500E0CAF8 /* Bowling Smorphs */ = {
+			isa = PBXGroup;
+			children = (
+				56E15F142C4D8D7A00E0CAF8 /* Rack.swift */,
+			);
+			path = "Bowling Smorphs";
+			sourceTree = "<group>";
+		};
+		56E15F172C4DC91D00E0CAF8 /* Aggregates */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Aggregates;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -272,7 +315,8 @@
 				5692EDA42C386E50000F4A68 /* ContentView.swift in Sources */,
 				5692EDD42C3DD20B000F4A68 /* BowlingGameViewModel.swift in Sources */,
 				5692EDCE2C386EA5000F4A68 /* BowlingScoresheet.swift in Sources */,
-				5692EDA62C386E50000F4A68 /* Item.swift in Sources */,
+				5692EDD62C3DD597000F4A68 /* BowlingGameView.swift in Sources */,
+				56E15F152C4D8D7A00E0CAF8 /* Rack.swift in Sources */,
 				5692EDA22C386E50000F4A68 /* HambonePOCApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
