@@ -454,4 +454,8 @@ extension Set<BowlingScoresheet.Pin> {
         
         return self.contains(BowlingScoresheet.Pin.allCases[number-1])
     }
+    
+    static var allCases: Set<BowlingScoresheet.Pin> {
+        Set(BowlingScoresheet.Pin.allCases)
+    }
 }

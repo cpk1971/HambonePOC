@@ -8,14 +8,14 @@
 import SwiftUI
 
 struct Frame: View {
-    @Binding var inputFrame: Int
     var frame: BowlingScoresheet.Frame
-    
+    var isInputFrame: Bool
+
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
         ZStack {
-            if frame.number == inputFrame {
+            if isInputFrame {
                 Rectangle()
                     .stroke(.red, lineWidth: 4)
                     .frame(width: 80, height: 160)
@@ -41,8 +41,10 @@ struct Frame: View {
                         .stroke(colorScheme.neutralColor, lineWidth: 1)
                         .frame(width: 80, height: 40)
                     .padding(0)
-                    Text(frame.runningScore.formatted())
-                        .font(.custom("Helvetica Neue", size: 24)).fontWeight(.bold)
+                    if(frame.isComplete) {
+                        Text(frame.runningScore.formatted())
+                            .font(.custom("Helvetica Neue", size: 24)).fontWeight(.bold)
+                    }
                 }
                 ZStack {
                     Rectangle()
@@ -70,7 +72,7 @@ fileprivate struct PreviewWrapper : View {
         frame.deliveries = deliveries
         frame.runningScore = score
         
-        return Frame(inputFrame: $inputFrame, frame: frame)
+        return Frame(frame: frame, isInputFrame: frame.number == 1)
     }
        
     var body: some View {

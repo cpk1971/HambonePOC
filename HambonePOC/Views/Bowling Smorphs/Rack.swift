@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct Rack: View {
-    @State var pins: Set<BowlingScoresheet.Pin> = []
+    @Binding var pins: Set<BowlingScoresheet.Pin>
     
     @Environment(\.colorScheme) var colorScheme
     
@@ -84,6 +84,14 @@ struct Rack: View {
     }
 }
 
+fileprivate struct PreviewWrapper : View {
+    @State var pins: Set<BowlingScoresheet.Pin> = []
+    
+    var body: some View {
+        Rack(pins: $pins)
+    }
+}
+
 #Preview {
-    Rack()
+    PreviewWrapper()
 }
