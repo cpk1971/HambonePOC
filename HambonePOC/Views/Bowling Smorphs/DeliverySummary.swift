@@ -41,8 +41,18 @@ struct DeliverySummary: View {
                     .felledFirst
                 }
                 // only showing first rack for now
-            case .three(let first, let second, _):
-                if first.contains(pin) {
+            case .three(let first, let second, let third):
+                if first == [] {
+                    if second.contains(pin) {
+                        if third.contains(pin) {
+                            .up
+                        } else {
+                            .felledSecond
+                        }
+                    } else {
+                        .felledFirst
+                    }
+                } else if first.contains(pin) {
                     if second.contains(pin) {
                         .up
                     } else {
@@ -77,30 +87,68 @@ struct DeliverySummary: View {
     }
     
     var body: some View {
-        VStack {
-            HStack {
-                makePin(7)
-                makePin(8)
-                makePin(9)
-                makePin(10)
+        if (frame.isStrike && frame.number < 10) || frame.isDouble || frame.isTriple {
+            if frame.number < 10 {
+                Text("❌").font(.title)
+            } else {
+                if frame.isDouble {
+                    Text("❌❌").font(.title2)
+                } else {
+                    Text("❌❌❌").font(.caption)
+                }
             }
-            HStack {
-                makePin(4)
-                makePin(5)
-                makePin(6)
-            }
-            HStack {
-                makePin(2)
-                makePin(3)
-            }
-            HStack {
-                makePin(1)
+        } else {
+            VStack {
+                HStack {
+                    makePin(7)
+                    makePin(8)
+                    makePin(9)
+                    makePin(10)
+                }
+                HStack {
+                    makePin(4)
+                    makePin(5)
+                    makePin(6)
+                }
+                HStack {
+                    makePin(2)
+                    makePin(3)
+                }
+                HStack {
+                    makePin(1)
+                }
             }
         }
     }
 }
 
+fileprivate func makeIt(frameNumber: Int, with deliveries: BowlingScoresheet.Frame.Deliveries) -> some View {
+    var frame = BowlingScoresheet.Frame(number: frameNumber)
+    frame.deliveries = deliveries
+    
+    return VStack {
+        Text(frame.line)
+        DeliverySummary(frame: frame).frame(width: 80, height: 60)
+    }
+    
+}
+
 #Preview {
-    let frame = BowlingScoresheet.Frame(number: 1)
-    return DeliverySummary(frame: frame)
+    VStack {
+        HStack {
+            makeIt(frameNumber: 1, with: .one(leave: []))
+            makeIt(frameNumber: 1, with: .two(first: [.ten], second: []))
+            makeIt(frameNumber: 1, with: .two(first: [.one, .two, .four, .ten], second: [.ten]))
+        }.padding(.bottom, 20)
+        HStack {
+            makeIt(frameNumber: 10, with: .three(first: [], second: [.six, .ten], third: []))
+            makeIt(frameNumber: 10, with: .three(first: [.four, .seven], second: [], third: []))
+            makeIt(frameNumber: 10, with: .three(first: [.four, .seven], second: [], third: [.ten]))
+        }
+        HStack {
+            makeIt(frameNumber: 10, with: .three(first: [], second: [.six, .ten], third: [.ten]))
+            makeIt(frameNumber: 10, with: .three(first: [], second: [], third: [.ten]))
+            makeIt(frameNumber: 10, with: .three(first: [], second: [], third: []))
+        }
+    }
 }

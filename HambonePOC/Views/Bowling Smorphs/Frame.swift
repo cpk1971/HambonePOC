@@ -61,34 +61,24 @@ struct Frame: View {
 }
 
 fileprivate struct PreviewWrapper : View {
-    @State var frame1: BowlingScoresheet.Frame
-    @State var frame2: BowlingScoresheet.Frame
-    @State var frame10: BowlingScoresheet.Frame
     @State var inputFrame = 1
     
-    init() {
-        var f1 = BowlingScoresheet.Frame(number: 1)
-        f1.deliveries = .two(first: [.ten], second: [])
-        f1.runningScore = 16
+    func makeIt(frameNumber: Int, 
+                with deliveries: BowlingScoresheet.Frame.Deliveries,
+                scoring score: Int) -> some View {
+        var frame = BowlingScoresheet.Frame(number: frameNumber)
+        frame.deliveries = deliveries
+        frame.runningScore = score
         
-        var f2 = BowlingScoresheet.Frame(number: 2)
-        f2.deliveries = .two(first: [.one, .two, .four, .ten], second: [.ten])
-        f2.runningScore = 25
-
-        var f10 = BowlingScoresheet.Frame(number: 10)
-        f10.deliveries = .three(first: [], second: [], third: [])
-        f10.runningScore = 290
-
-        frame1 = f1
-        frame2 = f2
-        frame10 = f10
+        return Frame(inputFrame: $inputFrame, frame: frame)
     }
-    
+       
     var body: some View {
         return HStack(spacing: 0) {
-            Frame(inputFrame: $inputFrame, frame: frame1)
-            Frame(inputFrame: $inputFrame, frame: frame2)
-            Frame(inputFrame: $inputFrame, frame: frame10)
+            makeIt(frameNumber: 1, with: .two(first: [.ten], second: []), scoring: 16)
+            makeIt(frameNumber: 2, with: .one(leave: []), scoring: 36)
+            makeIt(frameNumber: 3, with: .two(first: [.one, .two, .four, .ten], second: [.ten]), scoring: 45)
+            makeIt(frameNumber: 10, with: .three(first: [], second: [], third: []), scoring: 255)
         }
     }
 }

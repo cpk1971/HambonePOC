@@ -330,14 +330,42 @@ extension BowlingScoresheet.Frame {
     
     var isSpare: Bool {
         switch deliveries {
-        case .none:
-            false
-        case .one:
+        case .none, .one:
             false
         case let .two(_, second):
             second.count == 0
         case let .three(_, second, _):
             second.count == 0
+        }
+    }
+    
+    /// A double in one frame is possible only in the tenth frame and means the first two deliveries were strikes.
+    var isDouble: Bool {
+        if number < 10 {
+            false
+        } else {
+            switch deliveries {
+            case .none, .one:
+                false
+            case let .two(first, second):
+                first.count == 0 && second.count == 0
+            case let .three(first, second, third):
+                first.count == 0 && second.count == 0 && third.count != 0
+            }
+        }
+    }
+    
+    // A triple in one frame is possible only in the tenth frame and means all three deliveries were strikes.
+    var isTriple: Bool {
+        if number < 10 {
+            false
+        } else {
+            switch deliveries {
+            case .none, .one, .two:
+                false
+            case let .three(first, second, third):
+                first.count == 0 && second.count == 0 && third.count == 0
+            }
         }
     }
     
