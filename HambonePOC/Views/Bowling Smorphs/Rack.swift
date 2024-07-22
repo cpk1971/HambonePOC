@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct Rack: View {
-    @State var pins: Set<BowlingScoresheet.Pins> = []
+    @State var pins: Set<BowlingScoresheet.Pin> = []
     
     @Environment(\.colorScheme) var colorScheme
     
@@ -22,7 +22,7 @@ struct Rack: View {
     
     struct Pin: View {
         var number: Int
-        @Binding var pins: Set<BowlingScoresheet.Pins>
+        @Binding var pins: Set<BowlingScoresheet.Pin>
         
         @Environment(\.colorScheme) var colorScheme
         
@@ -42,7 +42,7 @@ struct Rack: View {
                     .font(Constants.pinFont)
                     .foregroundStyle(reverseColor)
             }.onTapGesture {
-                pins.remove(BowlingScoresheet.Pins.forNumber(number)!)
+                pins.remove(BowlingScoresheet.Pin.forNumber(number)!)
             }
         }
         
@@ -55,7 +55,7 @@ struct Rack: View {
                     .font(Constants.pinFont)
                     .foregroundColor(strokeColor)
             }.onTapGesture {
-                pins.insert(BowlingScoresheet.Pins.forNumber(number)!)
+                pins.insert(BowlingScoresheet.Pin.forNumber(number)!)
             }
         }
         

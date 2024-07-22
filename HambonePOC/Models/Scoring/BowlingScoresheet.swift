@@ -27,7 +27,7 @@ struct BowlingScoresheet: CustomStringConvertible {
     /// Assigning values may make it easier to compactly represent a game when
     /// we get around to storage.
     // TODO: there isn't a way to represent a foul here; perhaps another bit?
-    enum Pins: Int, CaseIterable {
+    enum Pin: Int, CaseIterable {
         case one   = 0x001,
              two   = 0x002,
              three = 0x004,
@@ -39,7 +39,7 @@ struct BowlingScoresheet: CustomStringConvertible {
              nine  = 0x100,
              ten   = 0x200
         
-        static func forNumber(_ number: Int) -> Pins? {
+        static func forNumber(_ number: Int) -> Pin? {
             guard number >= 1 && number <= 10 else { return nil }
             return allCases[number-1]
         }
@@ -49,7 +49,7 @@ struct BowlingScoresheet: CustomStringConvertible {
     /// This allows us to keep track of what pins were left, because one of the
     /// features of Hambone will be to track a bowler's performance in converting spares.
     /// Remembering what pins were left as part of the scoresheet is essential to this feature.
-    typealias Leave = Set<Pins>
+    typealias Leave = Set<Pin>
 
     /// Errors thrown by the API
     enum Error : Swift.Error {
@@ -418,12 +418,12 @@ extension BowlingScoresheet.Frame {
 
 }
 
-extension Set<BowlingScoresheet.Pins> {
+extension Set<BowlingScoresheet.Pin> {
     func isPinNumberSet(_ number: Int) -> Bool {
         if number < 1 || number > 10 {
             return false
         }
         
-        return self.contains(BowlingScoresheet.Pins.allCases[number-1])
+        return self.contains(BowlingScoresheet.Pin.allCases[number-1])
     }
 }
