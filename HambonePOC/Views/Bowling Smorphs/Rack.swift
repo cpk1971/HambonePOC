@@ -12,10 +12,6 @@ struct Rack: View {
     
     @Environment(\.colorScheme) var colorScheme
     
-    var strokeColor: Color {
-        colorScheme == .light ? .black : .white
-    }
-    
     struct Constants {
         static let pinFont = Font.custom("Helvetica Neue", size: 40).weight(.light)
     }
@@ -25,22 +21,14 @@ struct Rack: View {
         @Binding var pins: Set<BowlingScoresheet.Pin>
         
         @Environment(\.colorScheme) var colorScheme
-        
-        var strokeColor: Color {
-            colorScheme == .light ? .black : .white
-        }
-        
-        var reverseColor: Color {
-            colorScheme == .light ? .white : .black
-        }
-        
+               
         var leftPin: some View {
             ZStack {
                 Circle()
                     .frame(width: 65, height: 65)
                 Text(number.formatted())
                     .font(Constants.pinFont)
-                    .foregroundStyle(reverseColor)
+                    .foregroundStyle(colorScheme.neutralReverseColor)
             }.onTapGesture {
                 pins.remove(BowlingScoresheet.Pin.forNumber(number)!)
             }
@@ -49,11 +37,11 @@ struct Rack: View {
         var felledPin: some View {
             ZStack {
                 Circle()
-                    .stroke(strokeColor, lineWidth: 4)
+                    .stroke(colorScheme.neutralColor, lineWidth: 4)
                     .frame(width: 65, height: 65)
                 Text(number.formatted())
                     .font(Constants.pinFont)
-                    .foregroundColor(strokeColor)
+                    .foregroundColor(colorScheme.neutralColor)
             }.onTapGesture {
                 pins.insert(BowlingScoresheet.Pin.forNumber(number)!)
             }
@@ -80,21 +68,15 @@ struct Rack: View {
                 makePin(9)
                 makePin(10)
             }
-        }
-        VStack {
             HStack {
                 makePin(4)
                 makePin(5)
                 makePin(6)
             }
-        }
-        VStack {
             HStack {
                 makePin(2)
                 makePin(3)
             }
-        }
-        VStack {
             HStack {
                 makePin(1)
             }
