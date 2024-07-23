@@ -148,6 +148,40 @@ final class BowlingScoresheetFrameTests: XCTestCase {
         XCTAssertTrue(frame.isSpare, "a spare is properly recognized in the tenth frame")
     }
     
+    func test_that_isDouble_works() {
+        var frame = Frame(number: 9, deliveries: .one(leave: []))
+        XCTAssertFalse(frame.isDouble, "isDouble should never be true outside the tenth frame")
+        
+        frame = Frame(number: 10, deliveries: .one(leave: []))
+        XCTAssertFalse(frame.isDouble, "one strike isn't a double")
+
+        frame = Frame(number: 10, deliveries: .two(first: [], second: []))
+        XCTAssertTrue(frame.isDouble, "two strikes is a double")
+
+        frame = Frame(number: 10, deliveries: .three(first: [], second: [], third: []))
+        XCTAssertFalse(frame.isDouble, "three strikes is not a double")
+
+        frame = Frame(number: 10, deliveries: .three(first: [], second: [], third: [.ten]))
+        XCTAssertTrue(frame.isDouble, "two strikes and a partial fill is a double")
+    }
+    
+    func test_that_isTriple_works() {
+        var frame = Frame(number: 9, deliveries: .one(leave: []))
+        XCTAssertFalse(frame.isTriple, "isTriple should never be true outside the tenth frame")
+        
+        frame = Frame(number: 10, deliveries: .one(leave: []))
+        XCTAssertFalse(frame.isTriple, "one strike isn't a triple")
+
+        frame = Frame(number: 10, deliveries: .two(first: [], second: []))
+        XCTAssertFalse(frame.isTriple, "two strikes isn't a triple")
+
+        frame = Frame(number: 10, deliveries: .three(first: [], second: [], third: []))
+        XCTAssertTrue(frame.isTriple, "three strikes is a triple")
+
+        frame = Frame(number: 10, deliveries: .three(first: [], second: [], third: [.ten]))
+        XCTAssertFalse(frame.isTriple, "two strikes and a partial fill isn't a triple")
+    }
+    
     func test_description() {
         XCTAssertEqual("[#10: X X X = 300]", Frame(number: 10, deliveries: .three(first: [], second: [], third: []), runningScore: 300).description, "just testing the description")
     }
