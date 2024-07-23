@@ -22,10 +22,10 @@ struct GameEntry: View {
                 ScrollView(.horizontal) {
                     HStack(spacing: 0) {
                         ForEach(1...10, id: \.self) { i in
-                            Frame(frame: game.frames[i-1], isInputFrame: i == game.inputFrameNumber)
+                            Frame(frame: game.frames[i-1], isInputFrame: i == game.currentFrameNumber)
                         }
                     }
-                }.onChange(of: game.inputFrameNumber) { _, new in
+                }.onChange(of: game.currentFrameNumber) { _, new in
                     withAnimation {
                         if let new {
                             svrProxy.scrollTo(new, anchor: .center)
@@ -33,7 +33,7 @@ struct GameEntry: View {
                     }
                     
                 }
-                if let _ = game.inputFrameNumber {
+                if let _ = game.currentFrameNumber {
                     Rack(pins: $leave).padding([.top, .bottom], 20)
                     GameEntryButtons(leave: $leave)
                 }

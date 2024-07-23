@@ -97,8 +97,7 @@ struct BowlingScoresheet: CustomStringConvertible {
     }
     
     var isComplete: Bool {
-        // this might not be the best?
-        currentNumber == .none
+        frames.allSatisfy { $0.isComplete }
     }
     
     var description: String {
@@ -273,6 +272,10 @@ extension BowlingScoresheet.Frame {
         case .three:
             true
         }
+    }
+    
+    var isEmpty: Bool {
+        if case .none = deliveries { true } else { false }
     }
     
     var firstBallCount: Int {

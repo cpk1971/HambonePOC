@@ -14,14 +14,13 @@ class ScoringRoot {
     typealias Leave = BowlingScoresheet.Leave
     
     private var scoresheet = BowlingScoresheet()
-    var inputFrameNumber: Int? = 1
     
-    var inputFrame: Frame? {
-        if let n = inputFrameNumber {
-            scoresheet.frames[n - 1]
-        } else {
-            nil
-        }
+    var currentFrameNumber: Int? {
+        scoresheet.currentNumber
+    }
+    
+    var currentFrame: Frame? {
+        scoresheet.currentFrame
     }
     
     var frames: [Frame] {
@@ -33,19 +32,19 @@ class ScoringRoot {
     /// because that's the term of art in the sport of bowling, but in the tenth frame it means any situation where
     /// we are throwing at a full rack.
     var inputtingFirstDelivery: Bool {
-        guard let inputFrame else {
+        guard let currentFrame else {
             return false
         }
         
-        return switch inputFrame.deliveries {
+        return switch currentFrame.deliveries {
         case .none:
             true
         case let .one(leave):
             // in the tenth frame, our first ball was a strike so this is effectively a "first delivery"
-            inputFrameNumber == 10 && leave.count == 0
+            currentFrameNumber == 10 && leave.count == 0
         case let .two(_, second):
             // in the tenth frame, our first two balls were strikes OR our second ball was a spare, so this is a "first delivery".
-            inputFrame.number == 10 && second.count == 0
+            currentFrame.number == 10 && second.count == 0
         case .three:
             false
         }
@@ -55,9 +54,9 @@ class ScoringRoot {
     
     func recordMiss() {
         // FIXME: some error handling?
-        guard let inputFrame else { return }
+        guard let currentFrame else { return }
         
-        switch inputFrame.deliveries {
+        switch currentFrame.deliveries {
         case .none:
             // this is a gutter ball obviously
             recordDelivery(leave: Leave.allCases)
@@ -70,12 +69,20 @@ class ScoringRoot {
     }
     
     func recordDelivery(leave: Leave) {
-        // FIXME: add logic around inputting a different frame than we're actually on
-        // FIXME: add error handling or we'll crash
-        try! scoresheet.recordDelivery(leaving: leave)
+        do {
+            try scoresheet.recordDelivery(leaving: leave)
+        } catch {
+            // FIXME: not yet sure what to do here
+            print(error)
+        }
         scoresheet.updateRunningScore()
-        // FIXME: this will crash unless we figure out how to change previous deliveries
-        inputFrameNumber = scoresheet.currentNumber
+    }
+    
+    func resetForEditing(frameNumber: Int) {
+        // FIXME: is ignore on error best?
+        guard frameNumber >= 1 && frameNumber <= 10 else { return }
+        
+        // TODO: finish
     }
 }
 
