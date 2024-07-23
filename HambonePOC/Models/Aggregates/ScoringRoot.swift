@@ -32,16 +32,14 @@ class ScoringRoot {
         switch inputFrame.deliveries {
         case .none:
             true
-        case .one:
-            false
-        case let .two(first, _):
+        case let .one(leave):
             // in the tenth frame, our first ball was a strike so this is effectively a "first delivery"
-            inputFrame.number == 10 && first.count == 0
-        case let .three(_, second, _):
-            // if all pins were felled on the second ball of the tenth, it's either that we have a double or
-            // we covered a spare.  Either way we're shooting at a full rack with the third ball, so it counts
-            // as "first delivery".  We'll never get a "second" one, though.
-            inputFrameNumber == 10 && second.count == 0
+            inputFrameNumber == 10 && leave.count == 0
+        case let .two(_, second):
+            // in the tenth frame, our first two balls were strikes OR our second ball was a spare, so this is a "first delivery".
+            inputFrame.number == 10 && second.count == 0
+        case .three:
+            false
         }
     }
     

@@ -379,9 +379,11 @@ extension BowlingScoresheet.Frame {
             ""
         case .one:
             isStrike ? "X" : "\(firstBallCount)"
-        case .two:
+        case let .two(_, second):
             if !isStrike || (number < 10) {
                 isSpare ? "\(firstBallCount) /" : "\(firstBallCount) \(secondBallCount)"
+            } else if second.count == 0 {
+                "X X"
             } else {
                 "X \(secondBallCount)"
             }
