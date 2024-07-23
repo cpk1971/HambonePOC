@@ -11,7 +11,7 @@ import XCTest
 final class BowlingScoresheetTests: XCTestCase {
     typealias Leave = BowlingScoresheet.Leave
 
-    func testA300Score() throws {
+    func test_a_300_score() throws {
         var scoresheet = BowlingScoresheet()
         
         for _ in 1...12 {
@@ -29,7 +29,7 @@ final class BowlingScoresheetTests: XCTestCase {
         XCTAssertEqual(300, scoresheet.totalScore, "scoresheet total should be 300")
     }
     
-    func testADutch200Score() throws {
+    func test_a_dutch_200_score() throws {
         var scoresheet = BowlingScoresheet()
         
         // OK bowl a five pin, spare, then strike, five times
@@ -56,7 +56,7 @@ final class BowlingScoresheetTests: XCTestCase {
         XCTAssertEqual(200, scoresheet.totalScore, "scoresheet total should be 200")
     }
     
-    func testAMoreRealisticScore() throws {
+    func test_a_more_realistic_score() throws {
         var scoresheet = BowlingScoresheet()
         
         let someDeliveries : [Leave] = [
@@ -90,7 +90,7 @@ final class BowlingScoresheetTests: XCTestCase {
         XCTAssertEqual(162, scoresheet.totalScore, "scoresheet total should be 162")
     }
     
-    func testThatStateEngineWorks() throws {
+    func test_that_the_state_engine_works() throws {
         var scoresheet = BowlingScoresheet()
         let currentFrame = scoresheet.currentFrame!
         
@@ -116,7 +116,7 @@ final class BowlingScoresheetTests: XCTestCase {
         }
     }
     
-    func testThatIsSplitWorks() {
+    func test_that_isSplit_works() {
         var it: Leave = []
         
         XCTAssertFalse(it.isSplit, "a strike is not a split")
@@ -164,7 +164,7 @@ final class BowlingScoresheetTests: XCTestCase {
         }
     }
     
-    func testThatResetWorks() throws {
+    func test_that_reset_works() throws {
         var scoresheet = BowlingScoresheet()
         
         for _ in 1...12 {

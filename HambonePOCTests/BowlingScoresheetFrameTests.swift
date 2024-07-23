@@ -13,7 +13,7 @@ final class BowlingScoresheetFrameTests: XCTestCase {
     typealias ScoresheetError = BowlingScoresheet.Error
     typealias Leave = BowlingScoresheet.Leave
 
-    func testThatAFrameReportsTheRightCompletiondeliveries() throws {
+    func test_that_a_frame_reports_the_right_completion_status() throws {
         var frame = Frame(number: 1)
         XCTAssertFalse(frame.isComplete, "a new frame shouldn't be complete")
         
@@ -45,7 +45,7 @@ final class BowlingScoresheetFrameTests: XCTestCase {
         XCTAssertTrue(frame.isComplete, "an open frame completes the tenth frame")
     }
     
-    func testThatFirstBallCountWorks() {
+    func test_that_a_firstBallCount_works() {
         var frame = Frame(number: 1)
         XCTAssertEqual(0, frame.firstBallCount, "undelivered frame has a count of 0")
         
@@ -59,7 +59,7 @@ final class BowlingScoresheetFrameTests: XCTestCase {
         XCTAssertEqual(10, frame.firstBallCount, "strike even on a tenth frame turkey is 10 on the first ball")
     }
     
-    func testThatSecondBallCountWorks() {
+    func test_that_secondBallCount_works() {
         var frame = Frame(number: 1)
         XCTAssertEqual(0, frame.secondBallCount, "undelivered frame has count of 0")
         
@@ -76,7 +76,7 @@ final class BowlingScoresheetFrameTests: XCTestCase {
         XCTAssertEqual(1, frame.secondBallCount, "9/9 in frame 10 has a second ball count of 1")
     }
     
-    func testThatTotalCountWorks() {
+    func test_that_totalCount_works() {
         var frame = Frame(number: 1)
         XCTAssertEqual(0, frame.totalCount, "undelivered frame has count of 0")
         
@@ -108,7 +108,7 @@ final class BowlingScoresheetFrameTests: XCTestCase {
         XCTAssertEqual(19, frame.totalCount, "a tenth frame delivery of 9/9 has a count of 19")
     }
     
-    func testThatIsStrikeWorks() {
+    func test_that_isStrike_works() {
         var frame = Frame(number: 1)
         XCTAssertFalse(frame.isStrike, "an undelivered frame is not a strike")
                        
@@ -128,7 +128,7 @@ final class BowlingScoresheetFrameTests: XCTestCase {
         XCTAssertTrue(frame.isStrike, "in the tenth frame, the first delivery having no remaining pins is a strike regardless of the result of the other two balls")
     }
     
-    func testThatIsSpareWorks() {
+    func test_that_isSpare_works() {
         var frame = Frame(number: 1)
         XCTAssertFalse(frame.isSpare, "an undelivered frame is not a spare")
         
@@ -148,16 +148,20 @@ final class BowlingScoresheetFrameTests: XCTestCase {
         XCTAssertTrue(frame.isSpare, "a spare is properly recognized in the tenth frame")
     }
     
-    func testDescription() {
+    func test_description() {
         XCTAssertEqual("[#10: X X X = 300]", Frame(number: 10, deliveries: .three(first: [], second: [], third: []), runningScore: 300).description, "just testing the description")
     }
     
-    func testThatLineWorks() {
+    func test_that_line_works() {
         XCTAssertEqual("", Frame(number: 1).line, "undelivered frame should have an empty line")
         
         XCTAssertEqual("X", Frame(number: 1, deliveries: .one(leave: [])).line, "a strike should have the line 'X'")
         XCTAssertEqual("8", Frame(number: 1, deliveries: .one(leave: [.six, .ten])).line, "a single 8 count should have the line '8'")
+        XCTAssertEqual("-", Frame(number: 1, deliveries: .one(leave: Leave.allCases)).line, "a single gutter ball should have the line '-'")
         
+        XCTAssertEqual("- -", Frame(number: 1, deliveries: .two(first: Leave.allCases, second: Leave.allCases)).line, "double gutter should have the line '- -")
+        XCTAssertEqual("- /", Frame(number: 1, deliveries: .two(first: Leave.allCases, second: [])).line, "gutter spare should have the line '- /'")
+        XCTAssertEqual("9 -", Frame(number: 1, deliveries: .two(first: [.ten], second: [.ten])).line, "counts of 9 and 0 should have the line '9 -'")
         XCTAssertEqual("9 /", Frame(number: 1, deliveries: .two(first: [.ten], second: [])).line, "counts of 9 and 1 should have the line '9 /'")
         XCTAssertEqual("8 1", Frame(number: 1, deliveries: .two(first: [.six, .ten], second: [.ten])).line, "chopping the 6 off the 6-10 should have the line '8 1'")
         
@@ -166,10 +170,10 @@ final class BowlingScoresheetFrameTests: XCTestCase {
         XCTAssertEqual("9 / X", Frame(number: 10, deliveries: .three(first: [.ten], second: [], third: [])).line, "10th frame spare/strike should have the line '9 / X'")
         XCTAssertEqual("9 / 9", Frame(number: 10, deliveries: .three(first: [.ten], second: [], third: [.ten])).line, "10th frame 9/9 should have the line '9 / 9'")
         XCTAssertEqual("X X 8", Frame(number: 10, deliveries: .three(first: [], second: [], third: [.six, .ten])).line, "a 28-count 10th frame should have the line 'X X 8")
-        XCTAssertEqual("X 9 0", Frame(number: 10, deliveries: .three(first: [], second: [.ten], third: [.ten])).line, "an incomplete fill of 19 after a strike should have the line 'X 9 0")
+        XCTAssertEqual("X 9 -", Frame(number: 10, deliveries: .three(first: [], second: [.ten], third: [.ten])).line, "an incomplete fill of 19 after a strike should have the line 'X 9 0")
     }
     
-    func testThatRecordDeliveryWorks() throws {
+    func test_that_stateful_recordDelivery_works() throws {
         var frame = Frame(number: 1)
         
         try frame.recordDelivery(leaving: [.ten])
@@ -211,4 +215,67 @@ final class BowlingScoresheetFrameTests: XCTestCase {
             XCTAssertEqual(error as! ScoresheetError, .unsequencedDelivery)
         }
     }
+    
+    func test_that_stateless_recordDelivery_works_before_the_10th_frame() throws {
+        var frame = Frame(number: 9, deliveries: .one(leave: []))
+        
+        XCTAssertThrowsError(try frame.recordDelivery(for: 3, leaving: []), "can't rerecord a third delivery") { error in
+            XCTAssertEqual(error as! ScoresheetError, .invalidDelivery)
+        }
+        
+        XCTAssertThrowsError(try frame.recordDelivery(for: 2, leaving: []), "can't rerecord a second delivery for a strike") { error in
+            XCTAssertEqual(error as! ScoresheetError, .invalidDelivery)
+        }
+        
+        try frame.recordDelivery(for: 1, leaving: [.ten])
+        var success = if case let .one(leave) = frame.deliveries, leave == [.ten] { true } else { false }
+        XCTAssertTrue(success, "should rerecord the first delivery")
+        
+        try frame.recordDelivery(for: 2, leaving: [])
+        success = if case let .two(first, second) = frame.deliveries, first == [.ten] && second == [] { true } else { false }
+        XCTAssertTrue(success, "should be able to record the second delivery this way")
+        
+        try frame.recordDelivery(for: 2, leaving: [.ten])
+        success = if case let .two(first, second) = frame.deliveries, first == [.ten] && second == [.ten] { true } else { false }
+        XCTAssertTrue(success, "...and then should be able to rerecord it")
+    }
+    
+    func test_that_stateless_recordDelivery_works_for_the_10th_frame() throws {
+        var frame = Frame(number: 10, deliveries: .one(leave: []))
+        
+        XCTAssertThrowsError(try frame.recordDelivery(for: 3, leaving: []), "can't rerecord a third delivery after just one throw") { error in
+            XCTAssertEqual(error as! ScoresheetError, .invalidDelivery)
+        }
+        
+        try frame.recordDelivery(for: 2, leaving: [])
+        var success = if case let .two(first, second) = frame.deliveries, first == [] && second == [] { true } else { false }
+        XCTAssertTrue(success, "should be able to record a second strike this way")
+        
+        try frame.recordDelivery(for: 3, leaving: [])
+        success = if case let .three(first, second, third) = frame.deliveries, first == [] && second == [] && third == [] { true } else { false }
+        XCTAssertTrue(success, "should be able to record a third strike this way")
+
+        try frame.recordDelivery(for: 1, leaving: [.ten])
+        success = if case let .one(leave) = frame.deliveries, leave == [.ten] { true } else { false }
+        XCTAssertTrue(success, "should rerecord the first delivery, and erase the other two")
+        
+        // note that the cases are inverted compared to the above--this is on purpose, so we can proceed to the third ball
+        try frame.recordDelivery(for: 2, leaving: [.ten])
+        success = if case let .two(first, second) = frame.deliveries, first == [.ten] && second == [.ten] { true } else { false }
+        XCTAssertTrue(success, "should be able to record the second delivery this way")
+        
+        try frame.recordDelivery(for: 2, leaving: [])
+        success = if case let .two(first, second) = frame.deliveries, first == [.ten] && second == [] { true } else { false }
+        XCTAssertTrue(success, "...and then should be able to rerecord it")
+        
+        try frame.recordDelivery(for: 3, leaving: [])
+        success = if case let .three(first, second, third) = frame.deliveries, first == [.ten] && second == [] && third == [] { true } else { false }
+        XCTAssertTrue(success, "should be able to record the third delivery this way")
+
+        try frame.recordDelivery(for: 3, leaving: [.ten])
+        success = if case let .three(first, second, third) = frame.deliveries, first == [.ten] && second == [] && third == [.ten] { true } else { false }
+        XCTAssertTrue(success, "...and then should be able to rerecord it")
+
+    }
+
 }

@@ -56,6 +56,7 @@ struct BowlingScoresheet: CustomStringConvertible {
         case gameCompleted
         case invalidFrame
         case unsequencedDelivery
+        case invalidDelivery
     }
 
     /// A model of a frame of bowling.
@@ -238,21 +239,36 @@ extension BowlingScoresheet.Leave {
     
 }
 
+fileprivate extension Int {
+    var dashForZero: String {
+        self != 0 ? self.formatted() : "-"
+    }
+}
+
 extension BowlingScoresheet.Frame {
     typealias Leave = BowlingScoresheet.Leave
     typealias Error = BowlingScoresheet.Error
+    
+    var nextDelivery: Int? {
+        switch deliveries {
+        case .none: 1
+        case .one: 2
+        case .two: (number <= 10 || (!isStrike && !isSpare)) ? 3 : nil
+        case .three: nil
+        }
+    }
     
     var isComplete: Bool {
         switch deliveries {
         case .none:
             false
         case let .one(leave):
-            leave == [] && number < 10
+            leave.count == 0 && number < 10
         case let .two(first, second):
             if number < 10 {
                 true
             } else {
-                first != [] && second != []
+                first.count != 0 && second.count != 0
             }
         case .three:
             true
@@ -378,38 +394,40 @@ extension BowlingScoresheet.Frame {
         case .none:
             ""
         case .one:
-            isStrike ? "X" : "\(firstBallCount)"
+            isStrike ? "X" : firstBallCount.dashForZero
         case let .two(_, second):
             if !isStrike || (number < 10) {
-                isSpare ? "\(firstBallCount) /" : "\(firstBallCount) \(secondBallCount)"
+                isSpare ? "\(firstBallCount.dashForZero) /" : "\(firstBallCount.dashForZero) \(secondBallCount.dashForZero)"
             } else if second.count == 0 {
                 "X X"
             } else {
-                "X \(secondBallCount)"
+                "X \(secondBallCount.dashForZero)"
             }
         case let .three(_, second, third):
             if isStrike {
                 if second.count == 0 && third.count == 0 {
                     "X X X"
                 } else if second.count == 0 {
-                    "X X \(10 - third.count)"
+                    "X X \((10 - third.count).dashForZero)"
                 } else if third.count == 0 {
-                    "X \(10 - second.count) /"
+                    "X \((10 - second.count).dashForZero) /"
                 } else {
-                    "X \(10 - second.count) \(second.count - third.count)"
+                    "X \((10 - second.count).dashForZero) \((second.count - third.count).dashForZero)"
                 }
             } else if isSpare {
                 if third.count == 0 {
-                    "\(firstBallCount) / X"
+                    "\(firstBallCount.dashForZero) / X"
                 } else {
-                    "\(firstBallCount) / \(10 - third.count)"
+                    "\(firstBallCount.dashForZero) / \((10 - third.count).dashForZero)"
                 }
             } else {
-                "\(firstBallCount) \(secondBallCount)"
+                "this shouldn't happen"
             }
         }
     }
     
+    /// this version relies on the scoring state machine--it will just naturally record the throw
+    /// in the next slot.  of course, if it doesn't make sense it complains
     mutating func recordDelivery(leaving leave: Leave) throws {
         if isComplete {
             throw Error.unsequencedDelivery
@@ -428,6 +446,47 @@ extension BowlingScoresheet.Frame {
             }
         case .three:
             throw Error.unsequencedDelivery
+        }
+    }
+    
+    /// this version is primarily intended for edits, however, it could be used to enter a game if you took
+    /// great care to get everything in the right order
+    ///
+    /// on the other hand it's state-insensitive and if you're not careful you could put the game in an
+    /// invalid state
+    // FIXME: this all seems very clunky
+    mutating func recordDelivery(for whichDelivery: Int, leaving leave: Leave) throws {
+        if number < 10 {
+            if (whichDelivery < 1 || whichDelivery > 2) || (isStrike && whichDelivery == 2) {
+                throw Error.invalidDelivery
+            }
+        } else {
+            if (whichDelivery < 1 || whichDelivery > 3) || (!isSpare && !isStrike && whichDelivery == 3) {
+                throw Error.invalidDelivery
+            }
+        }
+
+        switch whichDelivery {
+        case 1:
+            deliveries = .one(leave: leave)
+        case 2:
+            switch deliveries {
+            case .none:
+                throw Error.invalidDelivery
+            case let .one(first):
+                deliveries = .two(first: first, second: leave)
+            case let .two(first, _), let .three(first, _, _):
+                deliveries = .two(first: first, second: leave)
+            }
+        case 3:
+            switch deliveries {
+            case .none, .one:
+                throw Error.invalidDelivery
+            case let .two(first, second), let .three(first, second, _):
+                deliveries = .three(first: first, second: second, third: leave)
+            }
+        default:
+            throw Error.invalidDelivery
         }
     }
     
