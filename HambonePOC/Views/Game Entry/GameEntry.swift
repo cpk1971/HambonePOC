@@ -42,42 +42,46 @@ struct GameEntry: View {
                     }
                 }.onChange(of: game.inputFrameNumber) { _, new in
                     withAnimation {
-                        svrProxy.scrollTo(new, anchor: .center)
+                        if let new {
+                            svrProxy.scrollTo(new, anchor: .center)
+                        }
                     }
                     
                 }
-                Rack(pins: $leave).padding([.top, .bottom], 20)
-                if game.inputtingFirstDelivery {
-                    HStack {
-                        makeButton(label: "Gutter", action: {
-                            game.recordDelivery(leave: Leave(Pin.allCases))
-                        })
-                        makeButton(label: "Strike", action: {
-                            game.recordDelivery(leave: [])
-                        })
-                        makeButton(label: "Record >", action: {
-                            game.recordDelivery(leave: leave)
-                            // on the case of a strike let's reset
-                            if leave.count == 0 {
+                if let _ = game.inputFrameNumber {
+                    Rack(pins: $leave).padding([.top, .bottom], 20)
+                    if game.inputtingFirstDelivery {
+                        HStack {
+                            makeButton(label: "Gutter", action: {
+                                game.recordDelivery(leave: Leave(Pin.allCases))
+                            })
+                            makeButton(label: "Strike", action: {
+                                game.recordDelivery(leave: [])
+                            })
+                            makeButton(label: "Record >", action: {
+                                game.recordDelivery(leave: leave)
+                                // on the case of a strike let's reset
+                                if leave.count == 0 {
+                                    leave = Leave.allCases
+                                }
+                            })
+                        }
+                    } else {
+                        HStack {
+                            makeButton(label: "<", action: {})
+                            makeButton(label: "Miss", action: {
+                                game.recordMiss()
                                 leave = Leave.allCases
-                            }
-                        })
-                    }
-                } else {
-                    HStack {
-                        makeButton(label: "<", action: {})
-                        makeButton(label: "Miss", action: {
-                            game.recordMiss()
-                            leave = Leave.allCases
-                        })
-                        makeButton(label: "Spare", action: {
-                            game.recordDelivery(leave: [])
-                            leave = Leave.allCases
-                        })
-                        makeButton(label: "Next >", action: {
-                            game.recordDelivery(leave: leave)
-                            leave = Leave.allCases
-                        })
+                            })
+                            makeButton(label: "Spare", action: {
+                                game.recordDelivery(leave: [])
+                                leave = Leave.allCases
+                            })
+                            makeButton(label: "Next >", action: {
+                                game.recordDelivery(leave: leave)
+                                leave = Leave.allCases
+                            })
+                        }
                     }
                 }
             }

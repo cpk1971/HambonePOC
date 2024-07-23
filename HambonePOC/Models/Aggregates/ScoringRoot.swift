@@ -14,10 +14,14 @@ class ScoringRoot {
     typealias Leave = BowlingScoresheet.Leave
     
     private var scoresheet = BowlingScoresheet()
-    var inputFrameNumber = 1
+    var inputFrameNumber: Int? = 1
     
-    var inputFrame: Frame {
-        scoresheet.frames[inputFrameNumber - 1]
+    var inputFrame: Frame? {
+        if let n = inputFrameNumber {
+            scoresheet.frames[n - 1]
+        } else {
+            nil
+        }
     }
     
     var frames: [Frame] {
@@ -29,7 +33,11 @@ class ScoringRoot {
     /// because that's the term of art in the sport of bowling, but in the tenth frame it means any situation where
     /// we are throwing at a full rack.
     var inputtingFirstDelivery: Bool {
-        switch inputFrame.deliveries {
+        guard let inputFrame else {
+            return false
+        }
+        
+        return switch inputFrame.deliveries {
         case .none:
             true
         case let .one(leave):
@@ -46,6 +54,9 @@ class ScoringRoot {
     // MARK: - Intents
     
     func recordMiss() {
+        // FIXME: some error handling?
+        guard let inputFrame else { return }
+        
         switch inputFrame.deliveries {
         case .none:
             // this is a gutter ball obviously
@@ -64,7 +75,7 @@ class ScoringRoot {
         try! scoresheet.recordDelivery(leaving: leave)
         scoresheet.updateRunningScore()
         // FIXME: this will crash unless we figure out how to change previous deliveries
-        inputFrameNumber = scoresheet.currentNumber ?? 10
+        inputFrameNumber = scoresheet.currentNumber
     }
 }
 
