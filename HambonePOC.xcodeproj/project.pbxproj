@@ -22,6 +22,7 @@
 		56E15F1E2C4EA88100E0CAF8 /* ColorScheme+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56E15F1D2C4EA88100E0CAF8 /* ColorScheme+Extensions.swift */; };
 		56E15F202C4EB81A00E0CAF8 /* DeliverySummary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56E15F1F2C4EB81A00E0CAF8 /* DeliverySummary.swift */; };
 		56E15F242C4F0B8A00E0CAF8 /* GameEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56E15F232C4F0B8A00E0CAF8 /* GameEntry.swift */; };
+		56E98EEE2C503E54009BBDD2 /* GameEntryButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56E98EED2C503E54009BBDD2 /* GameEntryButtons.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -60,6 +61,7 @@
 		56E15F1D2C4EA88100E0CAF8 /* ColorScheme+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ColorScheme+Extensions.swift"; sourceTree = "<group>"; };
 		56E15F1F2C4EB81A00E0CAF8 /* DeliverySummary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeliverySummary.swift; sourceTree = "<group>"; };
 		56E15F232C4F0B8A00E0CAF8 /* GameEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameEntry.swift; sourceTree = "<group>"; };
+		56E98EED2C503E54009BBDD2 /* GameEntryButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameEntryButtons.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -203,6 +205,7 @@
 			isa = PBXGroup;
 			children = (
 				56E15F232C4F0B8A00E0CAF8 /* GameEntry.swift */,
+				56E98EED2C503E54009BBDD2 /* GameEntryButtons.swift */,
 			);
 			path = "Game Entry";
 			sourceTree = "<group>";
@@ -345,6 +348,7 @@
 				5692EDCE2C386EA5000F4A68 /* BowlingScoresheet.swift in Sources */,
 				56E15F1E2C4EA88100E0CAF8 /* ColorScheme+Extensions.swift in Sources */,
 				56E15F152C4D8D7A00E0CAF8 /* Rack.swift in Sources */,
+				56E98EEE2C503E54009BBDD2 /* GameEntryButtons.swift in Sources */,
 				5692EDA22C386E50000F4A68 /* HambonePOCApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
