@@ -45,8 +45,22 @@ class ScoringRoot {
     
     // MARK: - Intents
     
+    func recordMiss() {
+        switch inputFrame.deliveries {
+        case .none:
+            // this is a gutter ball obviously
+            recordDelivery(leave: Leave.allCases)
+        case let .one(leave), let .two(_, leave):
+            // leave the same pins
+            recordDelivery(leave: leave)
+        case .three:
+            return
+        }
+    }
+    
     func recordDelivery(leave: Leave) {
-        // FIXME: add logic around inputting a different game than we're actually on
+        // FIXME: add logic around inputting a different frame than we're actually on
+        // FIXME: add error handling or we'll crash
         try! scoresheet.recordDelivery(leaving: leave)
         scoresheet.updateRunningScore()
         // FIXME: this will crash unless we figure out how to change previous deliveries

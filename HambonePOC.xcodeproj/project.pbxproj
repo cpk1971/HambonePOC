@@ -16,8 +16,6 @@
 		5692EDCE2C386EA5000F4A68 /* BowlingScoresheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5692EDCD2C386EA5000F4A68 /* BowlingScoresheet.swift */; };
 		5692EDD02C390FAC000F4A68 /* BowlingScoresheetFrameTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5692EDCF2C390FAC000F4A68 /* BowlingScoresheetFrameTests.swift */; };
 		5692EDD22C3A509B000F4A68 /* BowlingScoresheetTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5692EDD12C3A509B000F4A68 /* BowlingScoresheetTests.swift */; };
-		5692EDD42C3DD20B000F4A68 /* BowlingGameViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5692EDD32C3DD20B000F4A68 /* BowlingGameViewModel.swift */; };
-		5692EDD62C3DD597000F4A68 /* BowlingGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5692EDD52C3DD597000F4A68 /* BowlingGameView.swift */; };
 		56E15F152C4D8D7A00E0CAF8 /* Rack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56E15F142C4D8D7A00E0CAF8 /* Rack.swift */; };
 		56E15F192C4E9E6600E0CAF8 /* ScoringRoot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56E15F182C4E9E6600E0CAF8 /* ScoringRoot.swift */; };
 		56E15F1B2C4EA21E00E0CAF8 /* Frame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56E15F1A2C4EA21E00E0CAF8 /* Frame.swift */; };
@@ -57,8 +55,6 @@
 		5692EDCD2C386EA5000F4A68 /* BowlingScoresheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BowlingScoresheet.swift; sourceTree = "<group>"; };
 		5692EDCF2C390FAC000F4A68 /* BowlingScoresheetFrameTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BowlingScoresheetFrameTests.swift; sourceTree = "<group>"; };
 		5692EDD12C3A509B000F4A68 /* BowlingScoresheetTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BowlingScoresheetTests.swift; sourceTree = "<group>"; };
-		5692EDD32C3DD20B000F4A68 /* BowlingGameViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BowlingGameViewModel.swift; sourceTree = "<group>"; };
-		5692EDD52C3DD597000F4A68 /* BowlingGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BowlingGameView.swift; sourceTree = "<group>"; };
 		56E15F142C4D8D7A00E0CAF8 /* Rack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rack.swift; sourceTree = "<group>"; };
 		56E15F182C4E9E6600E0CAF8 /* ScoringRoot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoringRoot.swift; sourceTree = "<group>"; };
 		56E15F1A2C4EA21E00E0CAF8 /* Frame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Frame.swift; sourceTree = "<group>"; };
@@ -166,8 +162,6 @@
 			isa = PBXGroup;
 			children = (
 				5692EDCD2C386EA5000F4A68 /* BowlingScoresheet.swift */,
-				5692EDD32C3DD20B000F4A68 /* BowlingGameViewModel.swift */,
-				5692EDD52C3DD597000F4A68 /* BowlingGameView.swift */,
 			);
 			path = Scoring;
 			sourceTree = "<group>";
@@ -342,12 +336,10 @@
 				5692EDA42C386E50000F4A68 /* ContentView.swift in Sources */,
 				56E15F202C4EB81A00E0CAF8 /* DeliverySummary.swift in Sources */,
 				56E15F1B2C4EA21E00E0CAF8 /* Frame.swift in Sources */,
-				5692EDD42C3DD20B000F4A68 /* BowlingGameViewModel.swift in Sources */,
 				56E15F192C4E9E6600E0CAF8 /* ScoringRoot.swift in Sources */,
 				56E15F242C4F0B8A00E0CAF8 /* GameEntry.swift in Sources */,
 				5692EDCE2C386EA5000F4A68 /* BowlingScoresheet.swift in Sources */,
 				56E15F1E2C4EA88100E0CAF8 /* ColorScheme+Extensions.swift in Sources */,
-				5692EDD62C3DD597000F4A68 /* BowlingGameView.swift in Sources */,
 				56E15F152C4D8D7A00E0CAF8 /* Rack.swift in Sources */,
 				5692EDA22C386E50000F4A68 /* HambonePOCApp.swift in Sources */,
 			);
