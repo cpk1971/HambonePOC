@@ -31,36 +31,29 @@ struct GameEntryButtons: View {
     }
     
     var body: some View {
-        if game.inputtingFirstDelivery {
+        if game.isInputtingFirstDelivery {
             HStack {
                 makeButton(label: "Gutter", action: {
                     game.recordDelivery(leave: Leave(Pin.allCases))
                 })
-                makeButton(label: "Strike", action: {
-                    game.recordDelivery(leave: [])
-                })
-                makeButton(label: "Record >", action: {
+                makeButton(label: leave.count == 0 ? "Strike >" : "Record >", action: {
                     game.recordDelivery(leave: leave)
-                    // on the case of a strike let's reset
-                    if leave.count == 0 {
-                        leave = Leave.allCases
-                    }
                 })
             }
         } else {
             HStack {
-                makeButton(label: "<", action: {})
+                makeButton(label: "Reset", action: {})
                 makeButton(label: "Miss", action: {
                     game.recordMiss()
-                    leave = Leave.allCases
+                    leave = []
                 })
-                makeButton(label: "Spare", action: {
-                    game.recordDelivery(leave: [])
-                    leave = Leave.allCases
-                })
-                makeButton(label: "Next >", action: {
-                    game.recordDelivery(leave: leave)
-                    leave = Leave.allCases
+                makeButton(label: (leave.count == 0 || !game.isLeaveChanged(leave)) ?       "Spare >" : "Record >", action: {
+                    if !game.isLeaveChanged(leave) {
+                        game.recordDelivery(leave: [])
+                    } else {
+                        game.recordDelivery(leave: leave)
+                    }
+                    leave = []
                 })
             }
         }    }

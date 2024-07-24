@@ -11,7 +11,7 @@ struct GameEntry: View {
     typealias Pin = BowlingScoresheet.Pin
     typealias Leave = BowlingScoresheet.Leave
     
-    @State var leave:  Leave = Leave(Pin.allCases)
+    @State var leave:  Leave = []
     
     @Environment(ScoringRoot.self) var game
     @Environment(\.colorScheme) var colorScheme

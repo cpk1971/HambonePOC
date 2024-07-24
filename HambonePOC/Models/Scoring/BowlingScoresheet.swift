@@ -87,7 +87,14 @@ struct BowlingScoresheet: CustomStringConvertible {
             Frame(number: frameNumber, deliveries: .none, runningScore: 0)
         }
     }
-    
+
+    var description: String {
+        var result = "["
+        frames.forEach { result += $0.description }
+        result += "]"
+        return result
+    }
+
     var currentFrame: Frame? {
         if let currentNumber {
             frames[currentNumber - 1]
@@ -100,11 +107,10 @@ struct BowlingScoresheet: CustomStringConvertible {
         frames.allSatisfy { $0.isComplete }
     }
     
-    var description: String {
-        var result = "["
-        frames.forEach { result += $0.description }
-        result += "]"
-        return result
+    func isFrameSelectable(_ number: Int) -> Bool {
+        guard (1...10).contains(number) else { return false }
+        
+        return frames.filter { $0.number < number }.allSatisfy { $0.isComplete }
     }
     
     mutating func updateRunningScore() {
@@ -254,6 +260,13 @@ extension BowlingScoresheet.Frame {
         case .one: 2
         case .two: (number <= 10 || (!isStrike && !isSpare)) ? 3 : nil
         case .three: nil
+        }
+    }
+    
+    var firstDelivery: Leave? {
+        switch deliveries {
+        case .none: nil
+        case let .one(first), let .two(first, _), let .three(first, _, _): first
         }
     }
     
