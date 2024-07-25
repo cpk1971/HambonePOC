@@ -24,6 +24,8 @@
 		56E15F242C4F0B8A00E0CAF8 /* GameEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56E15F232C4F0B8A00E0CAF8 /* GameEntry.swift */; };
 		56E98EEE2C503E54009BBDD2 /* GameEntryButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56E98EED2C503E54009BBDD2 /* GameEntryButtons.swift */; };
 		56E98EF02C51DB7A009BBDD2 /* FrameScoringLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56E98EEF2C51DB7A009BBDD2 /* FrameScoringLine.swift */; };
+		56E98EF22C52D51F009BBDD2 /* GameComplete.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56E98EF12C52D51F009BBDD2 /* GameComplete.swift */; };
+		56E98EF52C52D559009BBDD2 /* GeneralAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56E98EF42C52D559009BBDD2 /* GeneralAction.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -64,6 +66,8 @@
 		56E15F232C4F0B8A00E0CAF8 /* GameEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameEntry.swift; sourceTree = "<group>"; };
 		56E98EED2C503E54009BBDD2 /* GameEntryButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameEntryButtons.swift; sourceTree = "<group>"; };
 		56E98EEF2C51DB7A009BBDD2 /* FrameScoringLine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrameScoringLine.swift; sourceTree = "<group>"; };
+		56E98EF12C52D51F009BBDD2 /* GameComplete.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameComplete.swift; sourceTree = "<group>"; };
+		56E98EF42C52D559009BBDD2 /* GeneralAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralAction.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -171,6 +175,7 @@
 		56E15F132C4D8D4E00E0CAF8 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				56E98EF32C52D53F009BBDD2 /* Components */,
 				56E15F162C4D8D9500E0CAF8 /* Bowling Smorphs */,
 				56E15F252C4FF0E100E0CAF8 /* Game Entry */,
 			);
@@ -209,8 +214,17 @@
 			children = (
 				56E15F232C4F0B8A00E0CAF8 /* GameEntry.swift */,
 				56E98EED2C503E54009BBDD2 /* GameEntryButtons.swift */,
+				56E98EF12C52D51F009BBDD2 /* GameComplete.swift */,
 			);
 			path = "Game Entry";
+			sourceTree = "<group>";
+		};
+		56E98EF32C52D53F009BBDD2 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				56E98EF42C52D559009BBDD2 /* GeneralAction.swift */,
+			);
+			path = Components;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -351,6 +365,8 @@
 				56E15F242C4F0B8A00E0CAF8 /* GameEntry.swift in Sources */,
 				5692EDCE2C386EA5000F4A68 /* BowlingScoresheet.swift in Sources */,
 				56E15F1E2C4EA88100E0CAF8 /* ColorScheme+Extensions.swift in Sources */,
+				56E98EF22C52D51F009BBDD2 /* GameComplete.swift in Sources */,
+				56E98EF52C52D559009BBDD2 /* GeneralAction.swift in Sources */,
 				56E15F152C4D8D7A00E0CAF8 /* Rack.swift in Sources */,
 				56E98EEE2C503E54009BBDD2 /* GameEntryButtons.swift in Sources */,
 				5692EDA22C386E50000F4A68 /* HambonePOCApp.swift in Sources */,

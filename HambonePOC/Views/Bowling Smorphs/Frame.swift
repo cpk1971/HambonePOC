@@ -19,6 +19,7 @@ struct Frame: View {
                 Rectangle()
                     .stroke(.red, lineWidth: 4)
                     .frame(width: 80, height: 160)
+                    .zIndex(100)
             }
             VStack(alignment: .leading, spacing: 0) {
                 ZStack {

@@ -33,30 +33,37 @@ struct GameEntryButtons: View {
     var body: some View {
         if game.isInputtingFirstDelivery {
             HStack {
-                makeButton(label: "Gutter", action: {
+                GeneralAction("Gutter", action: {
                     game.recordDelivery(leave: Leave(Pin.allCases))
                 })
-                makeButton(label: leave.count == 0 ? "Strike >" : "Record >", action: {
+                Spacer()
+                GeneralAction(leave.count == 0 ? "Strike >" : "Record >", action: {
                     game.recordDelivery(leave: leave)
                 })
-            }
+            }.padding(30)
         } else {
             HStack {
-                makeButton(label: "Reset", action: {})
-                makeButton(label: "Miss", action: {
+                GeneralAction("Reset") {
+                    
+                }
+                Spacer().frame(width: 30)
+                GeneralAction("Miss") {
                     game.recordMiss()
                     leave = []
-                })
-                makeButton(label: (leave.count == 0 || !game.isLeaveChanged(leave)) ?       "Spare >" : "Record >", action: {
+                }
+                Spacer()
+                GeneralAction(leave.count == 0 || !game.isLeaveChanged(leave)
+                       ? "Spare >" : "Record >") {
                     if !game.isLeaveChanged(leave) {
                         game.recordDelivery(leave: [])
                     } else {
                         game.recordDelivery(leave: leave)
                     }
                     leave = []
-                })
-            }
-        }    }
+                }
+            }.padding(30)
+        }
+    }
 }
 
 #Preview {
