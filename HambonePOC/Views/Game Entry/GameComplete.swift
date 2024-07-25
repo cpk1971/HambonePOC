@@ -13,14 +13,18 @@ struct GameComplete: View {
     var body: some View {
         VStack {
             Text("Game complete!").font(.largeTitle)
-            GeneralAction("Save Game") { game.reset() }
-            Text("(but really it just resets the game because persistence is not implemented yet)").font(.caption2)
+            GeneralAction("Save Game") {
+                game.reset()
+            }
+            Text("but really it just resets the game").font(.caption2)
+            Text("because persistence is not implemented yet)").font(.caption2)
             Text("or tap a frame to make changes")
-        }
+        }.transition(.slideInFromRight)
         
     }
 }
 
 #Preview {
     GameComplete()
+        .environment(ScoringRoot())
 }

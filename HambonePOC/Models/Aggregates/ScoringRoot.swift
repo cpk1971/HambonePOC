@@ -29,6 +29,11 @@ class ScoringRoot {
     
     // MARK: - State exposures
     
+    var isComplete: Bool {
+        // scoresheet.isComplete
+        scoresheet.currentNumber == nil
+    }
+    
     func isFrameSelectable(_ number: Int) -> Bool {
         scoresheet.isFrameSelectable(number)
     }

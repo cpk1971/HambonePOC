@@ -191,11 +191,11 @@ struct BowlingScoresheet: CustomStringConvertible {
         guard (1...10).contains(number) else {
             throw Error.invalidFrame
         }
-        
+
         for i in (number-1)...9 {
             (_, _, _) = frames[i].reset()
         }
-        
+
         currentNumber = number
     }
     

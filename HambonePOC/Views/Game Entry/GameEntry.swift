@@ -38,9 +38,15 @@ struct GameEntry: View {
                     }
                     
                 }
-                if let _ = game.currentFrameNumber {
-                    Rack(pins: $leave, previousPins: game.previousDelivery).padding([.top, .bottom], 20)
-                    GameEntryButtons(leave: $leave)
+                if game.isComplete {
+                    VStack {
+                        GameComplete()
+                    }.transition(.slideInFromRight)
+                } else {
+                    VStack {
+                        Rack(pins: $leave, previousPins: game.previousDelivery).padding([.top, .bottom], 20)
+                        GameEntryButtons(leave: $leave)
+                    }.transition(.slideInFromRight)
                 }
                 Spacer()
             }

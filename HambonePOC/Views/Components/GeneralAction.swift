@@ -17,17 +17,25 @@ fileprivate struct AnimatedButtonStyle: ButtonStyle {
 
 struct GeneralAction: View {
     var label: String
+    var animate: Bool
     var action: () -> Void
     
     @Environment(\.colorScheme) var colorScheme
     
-    init (_ label: String, action: @escaping () -> Void) {
+    init (_ label: String, animate: Bool = false, action: @escaping () -> Void) {
         self.label = label
+        self.animate = animate
         self.action = action
     }
     
     var body: some View {
-        Button(action: { withAnimation { action() }}) {
+        Button(action: { 
+            if(animate) {
+                withAnimation { action() }
+            } else {
+                action()
+            }
+        }) {
             Text(label)
                 .font(.custom("Helvetica", size: 20))
                 .fontWeight(.bold)

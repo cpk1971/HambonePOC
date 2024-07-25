@@ -29,11 +29,17 @@ struct FrameScoringLine: View {
                             .stroke(colorScheme.neutralColor, lineWidth: 2)
                             .frame(width: 20, height: 20)
                     }
-                    Text(first).fslFont()
+                    Text(first)
+                        .id(first)
+                        .fslFont()
+                        .transition(.slideInFromRight)
                 }
                 if !second.isEmpty {
                     Spacer().frame(width: 15)
-                    Text(second).fslFont()
+                    Text(second)
+                        .id(second)
+                        .fslFont()
+                        .transition(.slideInFromRight)
                 }
                 Spacer()
             }
@@ -46,7 +52,10 @@ struct FrameScoringLine: View {
                             .stroke(colorScheme.neutralColor, lineWidth: 2)
                             .frame(width: 20, height: 20)
                     }
-                    Text(first).fslFont()
+                    Text(first)
+                        .fslFont()
+                        .id(first)
+                        .transition(.slideInFromRight)
                 }
                 if !second.isEmpty {
                     Spacer().frame(width: third.isEmpty ? 15 : 10)
@@ -56,12 +65,19 @@ struct FrameScoringLine: View {
                                 .stroke(colorScheme.neutralColor, lineWidth: 2)
                                 .frame(width: 20, height: 20)
                         }
-                        Text(second).fslFont()
+                        Text(second)
+                            .id(second)
+                            .fslFont()
+                            .transition(.slideInFromRight)
+
                     }
                 }
                 if !third.isEmpty {
                     Spacer().frame(width: 10)
-                    Text(third).fslFont()
+                    Text(third)
+                        .id(third)
+                        .fslFont()
+                        .transition(.slideInFromRight)
                 }
                 Spacer()
             }

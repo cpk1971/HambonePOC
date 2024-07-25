@@ -45,7 +45,9 @@ struct Frame: View {
                     .padding(0)
                     if(frame.isComplete) {
                         Text(frame.runningScore.formatted())
+                            .id(frame.runningScore)
                             .font(.custom("Helvetica Neue", size: 24)).fontWeight(.bold)
+                            .transition(.slideInFromRight)
                     }
                 }
                 ZStack {
