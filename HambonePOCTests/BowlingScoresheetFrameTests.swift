@@ -146,6 +146,10 @@ final class BowlingScoresheetFrameTests: XCTestCase {
         
         frame = Frame(number: 10, deliveries: .three(first: [.one], second: [], third: []))
         XCTAssertTrue(frame.isSpare, "a spare is properly recognized in the tenth frame")
+
+        frame = Frame(number: 10, deliveries: .three(first: [], second: [.one], third: []))
+        XCTAssertFalse(frame.isSpare, "X 9 / is NOT a spare; it's a 'strike'")
+
     }
     
     func test_that_isDouble_works() {

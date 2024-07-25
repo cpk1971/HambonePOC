@@ -57,7 +57,28 @@ class ScoringRoot {
     }
     
     func isLeaveChanged(_ leave: Leave) -> Bool {
-        currentFrame?.firstDelivery != leave
+        leave != previousDelivery
+    }
+    
+    /// when we're making a shot at a partial rack we need to know what was left so we can hide input
+    /// buttons on the spare entry.  This is "nil" at all other times.
+    var previousDelivery: Leave? {
+        guard let currentFrame else {
+            return nil
+        }
+        
+        return if currentFrame.number < 10 {
+            switch currentFrame.deliveries {
+            case .none, .two, .three: nil
+            case let .one(leave): leave
+            }
+        } else {
+            switch currentFrame.deliveries {
+            case .none, .three: nil
+            case let .one(leave): currentFrame.isStrike ? nil : leave
+            case let .two(_, leave): currentFrame.isSpare ? nil : leave
+            }
+        }
     }
     
     // MARK: - Intents

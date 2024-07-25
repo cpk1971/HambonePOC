@@ -19,6 +19,7 @@ struct GameEntry: View {
     var body: some View {
         ScrollViewReader { svrProxy in
             VStack {
+                Text("Hambone!").font(.largeTitle)
                 ScrollView(.horizontal) {
                     HStack(spacing: 0) {
                         ForEach(1...10, id: \.self) { i in
@@ -34,9 +35,10 @@ struct GameEntry: View {
                     
                 }
                 if let _ = game.currentFrameNumber {
-                    Rack(pins: $leave).padding([.top, .bottom], 20)
+                    Rack(pins: $leave, previousPins: game.previousDelivery).padding([.top, .bottom], 20)
                     GameEntryButtons(leave: $leave)
                 }
+                Spacer()
             }
         }
     }

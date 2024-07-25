@@ -8,7 +8,10 @@
 import SwiftUI
 
 struct Rack: View {
-    @Binding var pins: Set<BowlingScoresheet.Pin>
+    typealias Leave = BowlingScoresheet.Leave
+    
+    @Binding var pins: Leave
+    var previousPins: Leave?
     
     @Environment(\.colorScheme) var colorScheme
     
@@ -18,7 +21,8 @@ struct Rack: View {
     
     struct Pin: View {
         var number: Int
-        @Binding var pins: Set<BowlingScoresheet.Pin>
+        @Binding var pins: Leave
+        var previousPins: Leave?
         
         @Environment(\.colorScheme) var colorScheme
                
@@ -47,8 +51,21 @@ struct Rack: View {
             }
         }
         
+        var shadowedPin: some View {
+            ZStack {
+                Circle()
+                    .stroke(colorScheme.neutralColor, lineWidth: 4)
+                    .frame(width: 65, height: 65)
+                Text(number.formatted())
+                    .font(Constants.pinFont)
+                    .foregroundColor(colorScheme.neutralColor)
+            }.opacity(0.2)
+        }
+        
         var body: some View {
-            if pins.isPinNumberSet(number) {
+            if let prev = previousPins, !prev.isPinNumberSet(number) {
+                shadowedPin.padding(.trailing, 8).padding(.bottom, 1)
+            } else if pins.isPinNumberSet(number) {
                 leftPin.padding(.trailing, 8).padding(.bottom, 1)
             } else {
                 felledPin.padding(.trailing, 8).padding(.bottom, 1)
@@ -57,7 +74,7 @@ struct Rack: View {
     }
     
     func makePin(_ number: Int) -> Pin {
-        Pin(number: number, pins: $pins)
+        Pin(number: number, pins: $pins, previousPins: previousPins)
     }
     
     var body: some View {

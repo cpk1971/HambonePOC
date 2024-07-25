@@ -347,6 +347,7 @@ extension BowlingScoresheet.Frame {
         }
     }
     
+    /// only the first ball counts here; "strikes" on the fill balls in the tenth do not count
     var isStrike: Bool {
         switch deliveries {
         case .none:
@@ -360,14 +361,13 @@ extension BowlingScoresheet.Frame {
         }
     }
     
+    /// only the first two balls count here; a "spare" on the 10th fill is *not* a "spare" for this purpose
     var isSpare: Bool {
         switch deliveries {
         case .none, .one:
             false
-        case let .two(_, second):
-            second.count == 0
-        case let .three(_, second, _):
-            second.count == 0
+        case let .two(first, second), let .three(first, second, _):
+            first.count != 0 && second.count == 0
         }
     }
     
