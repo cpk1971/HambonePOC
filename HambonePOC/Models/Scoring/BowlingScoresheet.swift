@@ -326,6 +326,20 @@ extension BowlingScoresheet.Frame {
         }
     }
     
+    var thirdBallCount: Int {
+        return if case let .three(_, second, third) = deliveries, number == 10 {
+            if isTriple {
+                10
+            } else if isDouble || isSpare {
+                10 - third.count
+            } else {
+                second.count - third.count
+            }
+        } else {
+            0
+        }
+    }
+    
     var totalCount: Int {
         switch deliveries {
         case .none:
@@ -438,6 +452,74 @@ extension BowlingScoresheet.Frame {
                 }
             } else {
                 "this shouldn't happen"
+            }
+        }
+    }
+    
+    enum DecomposedLine {
+        case normal(first: String, isSplit: Bool, second: String)
+        case tenth(first: String, isFirstSplit: Bool, second: String, isSecondSplit: Bool, third: String)
+    }
+    
+    var decomposedLine: DecomposedLine {
+        return if number < 10 {
+            switch deliveries {
+            case .none, .three:
+                .normal(first: "", isSplit: false, second: "")
+            case let .one(first):
+                .normal(
+                    first: isStrike ? "X" : firstBallCount.dashForZero,
+                    isSplit: first.isSplit,
+                    second: "")
+            case let .two(first, _):
+                .normal(
+                    first: firstBallCount.dashForZero,
+                    isSplit: first.isSplit,
+                    second: isSpare ? "/" : secondBallCount.dashForZero)
+            }
+        } else {
+            if isStrike {
+                switch deliveries {
+                case .none: // not really a valid case but....
+                    .tenth(first: "", isFirstSplit: false, second: "", isSecondSplit: false, third: "")
+                case .one:
+                    .tenth(first: "X", isFirstSplit: false, second: "", isSecondSplit: false, third: "")
+                case let .two(_, second):
+                    .tenth(
+                        first: "X", 
+                        isFirstSplit: false,
+                        second: secondBallCount == 10 ? "X" : secondBallCount.dashForZero, 
+                        isSecondSplit: second.isSplit,
+                        third: "")
+                case let .three(_, second, _):
+                    .tenth(
+                        first: "X",
+                        isFirstSplit: false,
+                        second: secondBallCount == 10 ? "X" : secondBallCount.dashForZero,
+                        isSecondSplit: second.isSplit,
+                        third: isTriple ? "X" : !isDouble && secondBallCount + thirdBallCount == 10 ? "/" : thirdBallCount.dashForZero)
+                }
+            } else {
+                switch deliveries {
+                case .none:
+                    .tenth(first: "", isFirstSplit: false, second: "", isSecondSplit: false, third: "")
+                case let .one(first):
+                    .tenth(first: firstBallCount.dashForZero, isFirstSplit: first.isSplit, second: "", isSecondSplit: false, third: "")
+                case let .two(first, _):
+                    .tenth(
+                        first: firstBallCount.dashForZero,
+                        isFirstSplit: first.isSplit,
+                        second: isSpare ? "/" : secondBallCount.dashForZero,
+                        isSecondSplit: false,
+                        third: "")
+                case let .three(first, _, _):
+                    .tenth(
+                        first: firstBallCount.dashForZero,
+                        isFirstSplit: first.isSplit,
+                        second: isSpare ? "/" : secondBallCount.dashForZero,
+                        isSecondSplit: false,
+                        third: thirdBallCount == 10 ? "X" : thirdBallCount.dashForZero)
+                }
             }
         }
     }

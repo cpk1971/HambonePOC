@@ -34,7 +34,8 @@ struct Frame: View {
                         .stroke(colorScheme.neutralColor, lineWidth: 1)
                         .frame(width: 80, height: 40)
                     .padding(0)
-                    Text(frame.line)
+                    FrameScoringLine(frame: frame)
+                        .frame(width: 80, height: 40)
                 }
                 ZStack {
                     Rectangle()
