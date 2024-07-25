@@ -31,37 +31,47 @@ struct GameEntryButtons: View {
     }
     
     var body: some View {
-        if game.isInputtingFirstDelivery {
-            HStack {
-                GeneralAction("Gutter", action: {
-                    game.recordDelivery(leave: Leave(Pin.allCases))
-                })
-                Spacer()
-                GeneralAction(leave.count == 0 ? "Strike >" : "Record >", action: {
-                    game.recordDelivery(leave: leave)
-                })
-            }.padding(30)
-        } else {
-            HStack {
-                GeneralAction("Reset") {
-                    
+        VStack {
+            if game.isInputtingFirstDelivery {
+                HStack {
+                    GeneralAction("Gutter", action: {
+                        game.recordDelivery(leave: Leave(Pin.allCases))
+                    })
+                    Spacer()
+                    GeneralAction(leave.count == 0 ? "Strike >" : "Record >", action: {
+                        withAnimation {
+                            game.recordDelivery(leave: leave)
+                        }
+                    })
                 }
-                Spacer().frame(width: 30)
-                GeneralAction("Miss") {
-                    game.recordMiss()
-                    leave = []
-                }
-                Spacer()
-                GeneralAction(leave.count == 0 || !game.isLeaveChanged(leave)
-                       ? "Spare >" : "Record >") {
-                    if !game.isLeaveChanged(leave) {
-                        game.recordDelivery(leave: [])
-                    } else {
-                        game.recordDelivery(leave: leave)
+                .transition(.slideInFromRight)
+                .padding(30)
+            } else {
+                HStack {
+                    GeneralAction("Reset") {
+                        
                     }
-                    leave = []
+                    Spacer().frame(width: 30)
+                    GeneralAction("Miss") {
+                        game.recordMiss()
+                        leave = []
+                    }
+                    Spacer()
+                    GeneralAction(leave.count == 0 || !game.isLeaveChanged(leave)
+                                  ? "Spare >" : "Record >") {
+                        withAnimation {
+                            if !game.isLeaveChanged(leave) {
+                                game.recordDelivery(leave: [])
+                            } else {
+                                game.recordDelivery(leave: leave)
+                            }
+                            leave = []
+                        }
+                    }
                 }
-            }.padding(30)
+                .transition(.slideInFromRight)
+                .padding(30)
+            }
         }
     }
 }

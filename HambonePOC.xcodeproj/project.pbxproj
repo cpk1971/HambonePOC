@@ -26,6 +26,7 @@
 		56E98EF02C51DB7A009BBDD2 /* FrameScoringLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56E98EEF2C51DB7A009BBDD2 /* FrameScoringLine.swift */; };
 		56E98EF22C52D51F009BBDD2 /* GameComplete.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56E98EF12C52D51F009BBDD2 /* GameComplete.swift */; };
 		56E98EF52C52D559009BBDD2 /* GeneralAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56E98EF42C52D559009BBDD2 /* GeneralAction.swift */; };
+		56E98EF72C52E27A009BBDD2 /* AnyTransition+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56E98EF62C52E27A009BBDD2 /* AnyTransition+Extensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -68,6 +69,7 @@
 		56E98EEF2C51DB7A009BBDD2 /* FrameScoringLine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrameScoringLine.swift; sourceTree = "<group>"; };
 		56E98EF12C52D51F009BBDD2 /* GameComplete.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameComplete.swift; sourceTree = "<group>"; };
 		56E98EF42C52D559009BBDD2 /* GeneralAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralAction.swift; sourceTree = "<group>"; };
+		56E98EF62C52E27A009BBDD2 /* AnyTransition+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AnyTransition+Extensions.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -205,6 +207,7 @@
 			isa = PBXGroup;
 			children = (
 				56E15F1D2C4EA88100E0CAF8 /* ColorScheme+Extensions.swift */,
+				56E98EF62C52E27A009BBDD2 /* AnyTransition+Extensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -360,6 +363,7 @@
 				5692EDA42C386E50000F4A68 /* ContentView.swift in Sources */,
 				56E15F202C4EB81A00E0CAF8 /* DeliverySummary.swift in Sources */,
 				56E15F1B2C4EA21E00E0CAF8 /* Frame.swift in Sources */,
+				56E98EF72C52E27A009BBDD2 /* AnyTransition+Extensions.swift in Sources */,
 				56E98EF02C51DB7A009BBDD2 /* FrameScoringLine.swift in Sources */,
 				56E15F192C4E9E6600E0CAF8 /* ScoringRoot.swift in Sources */,
 				56E15F242C4F0B8A00E0CAF8 /* GameEntry.swift in Sources */,

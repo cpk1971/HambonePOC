@@ -7,6 +7,14 @@
 
 import SwiftUI
 
+fileprivate struct AnimatedButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.75 : 1.0)
+            .animation(.spring(), value: configuration.isPressed)
+    }
+}
+
 struct GeneralAction: View {
     var label: String
     var action: () -> Void
@@ -19,7 +27,7 @@ struct GeneralAction: View {
     }
     
     var body: some View {
-        Button(action: action) {
+        Button(action: { withAnimation { action() }}) {
             Text(label)
                 .font(.custom("Helvetica", size: 20))
                 .fontWeight(.bold)
@@ -31,6 +39,8 @@ struct GeneralAction: View {
                         .stroke(Color.green, lineWidth: 2)
                 )
         }
+        .buttonStyle(AnimatedButtonStyle())
+        
     }
 }
 
