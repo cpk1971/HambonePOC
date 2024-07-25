@@ -7,6 +7,20 @@
 
 import SwiftUI
 
+fileprivate extension View {
+    func pinFrame() -> some View {
+        self.frame(width: 65, height: 65)
+    }
+    
+    func pinPadding() -> some View {
+        self.padding(.trailing, 8).padding(.bottom, 1)
+    }
+    
+    func pinFont() -> some View {
+        self.font(.custom("Helvetica Neue", size: 40).weight(.light))
+    }
+}
+
 struct Rack: View {
     typealias Leave = BowlingScoresheet.Leave
     
@@ -14,11 +28,7 @@ struct Rack: View {
     var previousPins: Leave?
     
     @Environment(\.colorScheme) var colorScheme
-    
-    struct Constants {
-        static let pinFont = Font.custom("Helvetica Neue", size: 40).weight(.light)
-    }
-    
+        
     struct Pin: View {
         var number: Int
         @Binding var pins: Leave
@@ -26,49 +36,54 @@ struct Rack: View {
         
         @Environment(\.colorScheme) var colorScheme
                
-        var leftPin: some View {
+        var remainingPin: some View {
             ZStack {
                 Circle()
-                    .frame(width: 65, height: 65)
+                    .pinFrame()
                 Text(number.formatted())
-                    .font(Constants.pinFont)
+                    .pinFont()
                     .foregroundStyle(colorScheme.neutralReverseColor)
             }.onTapGesture {
                 pins.remove(BowlingScoresheet.Pin.forNumber(number)!)
-            }
+            }.pinPadding()
         }
         
         var felledPin: some View {
             ZStack {
                 Circle()
                     .stroke(colorScheme.neutralColor, lineWidth: 4)
-                    .frame(width: 65, height: 65)
+                    .pinFrame()
                 Text(number.formatted())
-                    .font(Constants.pinFont)
+                    .pinFont()
                     .foregroundColor(colorScheme.neutralColor)
             }.onTapGesture {
                 pins.insert(BowlingScoresheet.Pin.forNumber(number)!)
-            }
+            }.pinPadding()
         }
         
+        // seems bad to copy-paste but we have to remove the action as well as
+        // put in opacity; as well we only have three cases of this, and simplicity
+        // outweighs reuse
         var shadowedPin: some View {
             ZStack {
                 Circle()
                     .stroke(colorScheme.neutralColor, lineWidth: 4)
-                    .frame(width: 65, height: 65)
+                    .pinFrame()
                 Text(number.formatted())
-                    .font(Constants.pinFont)
+                    .pinFont()
                     .foregroundColor(colorScheme.neutralColor)
-            }.opacity(0.2)
+            }
+            .opacity(0.4)
+            .pinPadding()
         }
         
         var body: some View {
             if let prev = previousPins, !prev.isPinNumberSet(number) {
-                shadowedPin.padding(.trailing, 8).padding(.bottom, 1)
+                shadowedPin
             } else if pins.isPinNumberSet(number) {
-                leftPin.padding(.trailing, 8).padding(.bottom, 1)
+                remainingPin
             } else {
-                felledPin.padding(.trailing, 8).padding(.bottom, 1)
+                felledPin
             }
         }
     }
