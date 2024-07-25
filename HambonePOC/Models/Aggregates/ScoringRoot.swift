@@ -83,6 +83,16 @@ class ScoringRoot {
     
     // MARK: - Intents
     
+    func recordDelivery(leave: Leave) {
+        do {
+            try scoresheet.recordDelivery(leaving: leave)
+        } catch {
+            // FIXME: not yet sure what to do here
+            print(error)
+        }
+        scoresheet.updateRunningScore()
+    }
+    
     func recordMiss() {
         // FIXME: some error handling?
         guard let currentFrame else { return }
@@ -99,14 +109,8 @@ class ScoringRoot {
         }
     }
     
-    func recordDelivery(leave: Leave) {
-        do {
-            try scoresheet.recordDelivery(leaving: leave)
-        } catch {
-            // FIXME: not yet sure what to do here
-            print(error)
-        }
-        scoresheet.updateRunningScore()
+    func reset() {
+        scoresheet.resetGame()
     }
     
     func resetForEditing(frameNumber: Int) {

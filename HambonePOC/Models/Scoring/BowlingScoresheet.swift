@@ -80,7 +80,7 @@ struct BowlingScoresheet: CustomStringConvertible {
    
     private(set) var frames: [Frame]
     private(set) var totalScore = 0
-    private(set) var currentNumber: Int? = 1
+    var currentNumber: Int? = 1
     
     init() {
         frames = (1...10).map { frameNumber in
@@ -187,7 +187,7 @@ struct BowlingScoresheet: CustomStringConvertible {
         return frames[number - 1].reset()
     }
     
-    mutating func resetGame(toFrame number: Int = 1) throws {
+    mutating func resetGame(toFrame number: Int) throws {
         guard (1...10).contains(number) else {
             throw Error.invalidFrame
         }
@@ -195,6 +195,12 @@ struct BowlingScoresheet: CustomStringConvertible {
         for i in (number-1)...9 {
             (_, _, _) = frames[i].reset()
         }
+        
+        currentNumber = number
+    }
+    
+    mutating func resetGame() {
+        try! resetGame(toFrame: 1)
     }
 }
 

@@ -8,8 +8,16 @@
 import SwiftUI
 
 struct GameComplete: View {
+    @Environment(ScoringRoot.self) var game
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack {
+            Text("Game complete!").font(.largeTitle)
+            GeneralAction("Save Game") { game.reset() }
+            Text("(but really it just resets the game because persistence is not implemented yet)").font(.caption2)
+            Text("or tap a frame to make changes")
+        }
+        
     }
 }
 
