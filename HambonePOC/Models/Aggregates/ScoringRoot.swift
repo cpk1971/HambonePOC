@@ -122,7 +122,11 @@ class ScoringRoot {
         // FIXME: is ignore on error best?
         guard frameNumber >= 1 && frameNumber <= 10 else { return }
         
-        // TODO: finish
+        do {
+            _ = try scoresheet.resetFrame(number: frameNumber)
+        } catch {
+           /// ???
+        }
     }
 }
 

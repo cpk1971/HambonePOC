@@ -164,11 +164,13 @@ struct BowlingScoresheet: CustomStringConvertible {
         
         try frames[index].recordDelivery(leaving: leave)
         if frames[index].isComplete {
-            if currentNumber! < 10 {
-                currentNumber! += 1
-            } else {
-                currentNumber = nil
+            for i in 1...10 {
+                if !frames[i-1].isComplete {
+                    currentNumber = i
+                    return
+                }
             }
+            currentNumber = nil
         }
     }
     
